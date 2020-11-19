@@ -14,13 +14,13 @@ Currently there is no resource for UW students to see specific reviews and sugge
 ## Technical Description
 ### Architectural diagram mapping 
 
-User Client
-Gateway layer
-Authentication layer - verify student is UW student
-Redis session store
-mySQL database - information of all the evaluations/ratings of a course, information of students
-Search microservice - search for evaluations based on major/number
-Evaluation submission microservice - submit a form for evaluation of class
+User Client \
+Gateway layer \
+Authentication layer - verify student is UW student \
+Redis session store \
+mySQL database - information of all the evaluations/ratings of a course, information of students \
+Search microservice - search for evaluations based on major/number \
+Evaluation submission microservice - submit a form for evaluation of class \
 
 ![](./InfrastructureDiagram.png)
 https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
@@ -37,7 +37,7 @@ https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
 
 ## API EndPoints
 ### User 
-v1/User 
+v1/User \
 GET : to get a specific user account based on User ID. 
  * 200: Successful response with user information 
  * 401: Cannot verify User ID .
@@ -57,7 +57,7 @@ PATCH: to update user email Id or password
  * 500: internal server error
 
 ### Session
-/v1/sessions
+/v1/sessions \
 POST
  * 201: created a new session for a user on sign in
  * 415: unsupported media
@@ -71,7 +71,7 @@ DELETE
  * 403: forbidden request if not user's session
 
 ### Course 
-v1/Course :  to handle Course Information
+v1/Course :  to handle Course Information \
 GET : to get a specific course based on Course ID. 
  * 200: Successful response with course information 
  * 401: Cannot verify Course ID .
@@ -85,7 +85,7 @@ POST: to add new Course for discussion
  * 500: internal server error
 
 ### Evaluation
-v1/evaluation 
+v1/evaluation \
 POST: to add evaluation to a course
  * 201: created new evaluation  
  * 401: unauthorized user information access
@@ -104,59 +104,59 @@ DELETE: students who posted the evaluations will be able to delete their evaluat
 ## Data Models
  * **Evaluation**: The courses are evaluated and reviewed by students. The evaluations are specific to a course. A single course can have multiple evaluations based on the quarter, year and instructors involved. One user can submit only one evaluation per course. User will be able to edit and delete evaluations.
 
-Evaluation: {
-	ID: int
-	studentID: int
-  courseID: int
-	instructors: string (multiple instructors can be included separated by ‘ , ’ or ‘ ; ‘) 
-	year: date
-	quarter : string
-	creditType: string
-	credits: int
-	workload: int  (on a scale of 1-10)
-	gradingTechniques: int
-	description: string	
-	LikedUsers: string[] ( list of unique userIds who have liked the evaluation. The length of the array provides count of likes. Need to check if the userId exists before adding to the list, to maintain unique userIds)
-	DislikedUsers: string[] ( list of users who disliked the course) 
+Evaluation: { \
+	ID: int \
+	studentID: int \
+  courseID: int \
+	instructors: string (multiple instructors can be included separated by ‘ , ’ or ‘ ; ‘) \
+	year: date \
+	quarter : string \
+	creditType: string \
+	credits: int \
+	workload: int  (on a scale of 1-10) \
+	gradingTechniques: int \
+	description: string	\
+	LikedUsers: string[] ( list of unique userIds who have liked the evaluation. The length of the array provides count of likes. Need to check if the userId exists before adding to the list, to maintain unique userIds) \
+	DislikedUsers: string[] ( list of users who disliked the course) \
 }
 
  * **Course**: The evaluations are specific to a course. This data model contains course information such as Course Title, Course Code, Credits and a brief Description text.
 
-Course: {
-	ID: int
-	Title: string
-	Code: string
-	Description: string
-	Credits: int
+Course: { \
+	ID: int \
+	Title: string \
+	Code: string \
+	Description: string \
+	Credits: int \
 }
 
  * **Student**: represents student information
 
-Student: {
-	ID :  int64  
-	Email:  string 
-	PassHash: []byte 
-	UserName: string 
-	FirstName: string 
-	LastName:  string 
-	AvatarPhotoURL:  string 
+Student: { \
+	ID :  int64 \
+	Email:  string \ 
+	PassHash: []byte \ 
+	UserName: string \
+	FirstName: string \
+	LastName:  string \
+	AvatarPhotoURL:  string \
 }
 
  * **NewStudent**: represents new student information, used during user registration
 
-NewStudent struct {
-	Email: string 
-	Password: string 
-	PasswordConfirmed: string 
-	UserName: string 
-	FirstName: string 
-	LastName: string 
+NewStudent struct { \
+	Email: string \
+	Password: string \ 
+	PasswordConfirmed: string \ 
+	UserName: string \
+	FirstName: string \
+	LastName: string \
 }
 
  * **Student Credentials**: used during user login
-Credentials: {
-	Email: string 
-	Password: string 
+Credentials: { \
+	Email: string \ 
+	Password: string \ 
 }
 
 
