@@ -22,7 +22,7 @@ mySQL database - information of all the evaluations/ratings of a course, informa
 Search microservice - search for evaluations based on major/number
 Evaluation submission microservice - submit a form for evaluation of class
 
-<img> </img>
+![]('./Infrastructure Diagram.png')
 https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
 
 ### User Stories 
