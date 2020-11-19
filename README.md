@@ -62,10 +62,12 @@ POST
  * 201: created a new session for a user on sign in
  * 415: unsupported media
  * 500: internal server error
+
 /v1/sessions/
 GET
  * 400: bad request
  * 403: forbidden request if not user's session
+
 DELETE
  * 400: bad request
  * 403: forbidden request if not user's session
