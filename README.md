@@ -106,16 +106,16 @@ DELETE: students who posted the evaluations will be able to delete their evaluat
 
 	Evaluation: { \
 		ID: int \
-		studentID: int \
-	courseID: int \
-		instructors: string (multiple instructors can be included separated by ‘ , ’ or ‘ ; ‘) \
-		year: date \
-		quarter : string \
-		creditType: string \
-		credits: int \
-		workload: int  (on a scale of 1-10) \
-		gradingTechniques: int \
-		description: string	\
+		StudentID: int \
+		CourseID: int \
+		Instructors: string (multiple instructors can be included separated by ‘ , ’ or ‘ ; ‘) \
+		Year: date \
+		Quarter : string \
+		CreditType: string \
+		Credits: int \
+		Workload: int  (on a scale of 1-10) \
+		GradingTechniques: int \
+		Description: string	\
 		LikedUsers: string[] ( list of unique userIds who have liked the evaluation. The length of the array provides count of likes. Need to check if the userId exists before adding to the list, to maintain unique userIds) \
 		DislikedUsers: string[] ( list of users who disliked the course) \
 	}
@@ -155,8 +155,8 @@ DELETE: students who posted the evaluations will be able to delete their evaluat
 
  * **Student Credentials**: used during user login \
 	Credentials: { \
-		Email: string \ 
-		Password: string \ 
+		Email: string \
+		Password: string \
 	}
 
 
