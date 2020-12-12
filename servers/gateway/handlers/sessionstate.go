@@ -1,9 +1,8 @@
 package handlers
 
 import (
+	"Info441FinalProject/servers/gateway/models/users"
 	"time"
-
-	"github.com/info441-au20/assignments-melodc/servers/gateway/models/users"
 )
 
 type SessionState struct {

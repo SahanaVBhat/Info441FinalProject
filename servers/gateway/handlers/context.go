@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"github.com/info441-au20/assignments-melodc/servers/gateway/models/users"
-	"github.com/info441-au20/assignments-melodc/servers/gateway/sessions"
+	"Info441FinalProject/servers/gateway/models/users"
+	"Info441FinalProject/servers/gateway/sessions"
 )
 
 type HandlerContext struct {

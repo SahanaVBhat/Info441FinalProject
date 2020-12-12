@@ -1,15 +1,14 @@
 package handlers
 
 import (
+	"Info441FinalProject/servers/gateway/models/users"
+	"Info441FinalProject/servers/gateway/sessions"
 	"encoding/json"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/info441-au20/assignments-melodc/servers/gateway/models/users"
-	"github.com/info441-au20/assignments-melodc/servers/gateway/sessions"
 )
 
 //handles requests for the "users" resource.
@@ -59,17 +58,6 @@ func (hc *HandlerContext) UsersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-
-//get authenticated user
-// func (hc *HandlerContext) GetAuthenticatedUser(r *http.Request) (*users.User, error) {
-// 	//fetch the session state from the session store,
-// 		if err2 != nil {
-// 		return nil, err2
-// 	}
-// 	//and return the authenticated user
-// 	//or an error if the user is not authenticated
-// 	return sessState.AuthenticatedUser, nil
-// }
 
 //handles requests for a specific user based on user Id
 func (hc *HandlerContext) SpecificUserHandler(w http.ResponseWriter, r *http.Request) {
