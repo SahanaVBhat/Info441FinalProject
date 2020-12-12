@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-socket = new WebSocket("http://info441-deploy.me/ws") //  e.g.   new WebSocket(“http://localhost:4001/ws”)
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

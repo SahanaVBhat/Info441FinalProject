@@ -36,13 +36,12 @@ const connect = () => {
 const createdAt = new Date();
 const defaultChannel = { 
 	id: 1,
-	name: "general", 
-	description: "default channel", 
-	private: false, 
-	members: [], 
-	createdAt: createdAt, 
-	creator: {}, 
-	editedAt: "" 
+    code: 'INFO441',
+    title: 'Server-side Development',
+	description: 'Introduces server-side web development programming, services, tools, protocols, \
+	best practices and techniques for implementing data-driven and scalable web applications. \
+	Connects topics from human-centered design, information architecture, databases, data analytics and security to build a solution.',
+    credits: 5,
 };
 
 const query = new Channel(defaultChannel);
@@ -58,7 +57,7 @@ app.all('*',function(req,res,next)
 {
     if (!req.get('Origin')) return next();
 
-    res.set('Access-Control-Allow-Origin','http://myapp.com');
+    res.set('Access-Control-Allow-Origin','http://info441-deploy.me');
     res.set('Access-Control-Allow-Methods','GET,POST,DELETE,PATCH');
     res.set('Access-Control-Allow-Headers','X-Requested-With,Content-Type');
 
