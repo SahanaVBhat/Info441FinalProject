@@ -1,57 +1,24 @@
 const mongoose = require('mongoose');
 const express = require('express');
-const { channel, message } = require('./schemas');
-const handlers = require('./handlers');
-const amqp = require('amqplib/callback_api');
-
-// you can have multiple databases similar to sql.
-// this is the test database
-const rabbAddr = process.env.RABBITADDR || "amqp://rabbit:5672"
-const rabbQueueName = process.env.RABBITQUEUENAME || "queue"
+const { course, evaluation } = require('./schemas');
 
 const mongoEndpoint = "mongodb://customMongoContainer:27017/rabbit";
-//const rabbAddr = process.env.RABBITADDR || "amqp://localhost:5672";
-//const mongoEndpoint = "mongodb://localhost:27017/test";
 const port = 80;
-let rabbitChannel;
-// set up mongoose schemas
-const Channel = mongoose.model("Channel", channel);
-const Messages = mongoose.model("MessagesModel", message);
+
+const Course = mongoose.model("Course", course);
+const Evaluation = mongoose.model("Evaluation", evaluation);
 
 // set up express
 const app = express();
 app.use(express.json());
-
-
-const getRabbitChannel = () => {
-	return rabbitChannel;
-}
 
 // A function to connect to the mongo endpoint, used for refreshing on disconnect.
 const connect = () => {
 	mongoose.connect(mongoEndpoint);
 }
 
-//default 'general' channel
-const createdAt = new Date();
-const defaultChannel = { 
-	id: 1,
-    code: 'INFO441',
-    title: 'Server-side Development',
-	description: 'Introduces server-side web development programming, services, tools, protocols, \
-	best practices and techniques for implementing data-driven and scalable web applications. \
-	Connects topics from human-centered design, information architecture, databases, data analytics and security to build a solution.',
-    credits: 5,
-};
-
-const query = new Channel(defaultChannel);
-query.save((err, newChannel) => {
-	if (err) {
-		console.log("Unable to create default channel 'general'.");
-		return;
-	}
-	console.log("default channel created");
-});
+// create & add default courses
+defaultCourses();
 
 app.all('*',function(req,res,next)
 {
@@ -66,475 +33,52 @@ app.all('*',function(req,res,next)
     next();
 });
 
-// for all channels
-app.get("/v1/channels", async (req, res) => {
-	var XUser = req.header('X-User');
-	if(!XUser){
-		res.status(401).send("User Unauthorized");
-		return;
+// get all courses
+app.get("/v1/courses", async (req, res) => {
+	// 200: Successful response with all course information
+	// 500: Internal server error 
+
+	try {
+		const courses = await Course.find();
+		res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(courses);
+	} catch {
+		res.status(500).send("There was an issue getting courses");
 	}
+});
+
+// get specific course based on given course ID 
+app.get("/v1/courses/:courseID", async (req, res) => {
+    // 200: Successful response with course information
+    // 401: Cannot verify Course ID 
+    // 415: Cannot decode body or receive unsupported body
+	// 500: Internal server error
+	
     try {
-        const channels = await Channel.find([{"private":false}]);
-        res.set("Content-Type", "application/json");
-        res.json(channels);
-    } catch (e) {
-        res.status(500).send("There was an issue getting channels");
+        // // if getting course ID with body 
+        // const courseID = JSON.stringify(req.body);
+        // if (!courseID) {
+        //     res.status(415).send("Error: unsupported body")
+        // }
+
+        // get course with id from req
+        const courseID = req.params['courseID'];
+        var course = {};
+        Course.findById(courseID, function(err, c) {
+            if (err) {
+                res.status(401).send("Could not find course with the given ID");
+                return;
+            }
+            course = c;
+        });
+        //const specificCourse = await Channel.find({id: courseID});
+
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json(course);
+    } catch {
+        res.status(500).send("There was an issue getting the course");
     }
 });
-
-app.post("/v1/channels", async (req, res) => {
-	// verify user authorization
-	var XUser = req.header('X-User');
-	if(!XUser){
-		res.status(401).send("User Unauthorized");
-		return;
-	}
-	const { name, description, private, members, creator } = req.body;
-	if (!name) {
-		res.status(400).send("Must provide name of the channel");
-		return;
-	}
-	//get number of documents in channel
-	const Lastid = await Channel.countDocuments({});
-	const id = Lastid+1;
-	//get user
-	var usr = JSON.parse(XUser);
- 	const createdAt = new Date();
-
-	const channel = { 
-		id: id,
-		name: name, 
-		description: description, 
-		private: private, 
-		members: members, 
-		createdAt: createdAt, 
-		creator: usr
-	};
-
-	const query = new Channel(channel);
-	query.save((err, newChannel) => {
-		if (err) {
-			console.log(err);
-			res.status(500).send("Unable to create channel");
-			return;
-        }
-        
-        res.set("Content-Type", "application/json");
-		res.status(201).json(newChannel);
-
-		let userIDs = [];
-		if (private) {
-			//get userIDlist
-			for (let m in members){
-				userIDs.push(m.id);
-			}
-		}
-					  
-		let data = {
-			type: "channel-new",
-			channel: newChannel,
-			userIDs: userIDs
-		};
-
-		rabbitChannel.sendToQueue(rabbQueueName, Buffer.from(JSON.stringify(data)));
-	});
-});
-
-// for a specific channel identified by {channelID}
-app.get("/v1/channels/:id", async (req, res) => {
-	// verify user authorization
-	var XUser = req.header('X-User');
-	if(!XUser){
-		res.status(401).send("User Unauthorized");
-		return;
-	}
-	//get channel id 
-	const channelId = req.params.id;
-	const specificChannel = await Channel.find({ id: channelId });
-	//get user
-	var usr = JSON.parse(XUser);
-	//if private and user not member
-	if (specificChannel[0].private){
-		if (!specificChannel[0].members.includes(usr.id)){
-		res.status(403).send("Forbidden User");
-		return;
-		}
-	}
-
-    var messageList = await Messages.find({ channelID: channelId }).sort({ createdAt: -1 }).limit(100);
-    // the most recent 100 messages in the specified channel before a specific message
-    const beforeMessageID = req.query.before;
-    if (beforeMessageID) {
-        messageList = await Messages.find({ channelID: channelId , id: {$lt:beforeMessageID}}).sort({ createdAt: -1 }).limit(100);
-    }
-    res.set("Content-Type", "application/json");
-	res.status(201).json(messageList);
-	
-});
-
-app.post("/v1/channels/:id", async (req, res) => {
-	// verify user authorization
-	var XUser = req.header('X-User');
-	if(!XUser){
-		res.status(401).send("User Unauthorized");
-		return;
-	}
-	//get channel id 
-	const channelId = req.params.id;
-	const specificChannel = await Channel.find({ id: channelId });
-	//get user
-	var usr = JSON.parse(XUser);
-	//if private and user not member
-	if (specificChannel[0].private){
-		if (!specificChannel[0].members.includes(usr.id)){
-		res.status(403).send("Forbidden User");
-		return;
-		}
-	}
-	//get number of documents in Messages
-	const Lastid = await Messages.countDocuments({});
-	const id = Lastid+1;
-	// get message
-	const {body}  = req.body;
- 	const createdAt = new Date();
-	const message = { 
-		id : id,
-		channelID: channelId, 
-		body: body, 
-		createdAt: createdAt, 
-		creator: usr
-	};
-
-	const query = new Messages(message);
-	query.save((err, newMessage) => {
-		if (err) {
-			res.status(500).send("Unable to create message");
-			return;
-        }
-        res.set("Content-Type", "application/json");
-		res.status(201).json(newMessage);
-
-		let userIDs = [];
-		if (specificChannel[0].private) {
-			//get userIDlist
-			for (let m in specificChannel[0].members){
-				userIDs.push(m.id);
-			}
-		}
-					  
-		let data = {
-			type: "message-new",
-			message: newMessage,
-			userIDs: userIDs
-		};
-
-		rabbitChannel.sendToQueue(rabbQueueName, Buffer.from(JSON.stringify(data)));
-	});
-});
-
-app.patch("/v1/channels/:id", async (req, res) => {
-	// verify user authorization
-	var XUser = req.header('X-User');
-	if(!XUser){
-		res.status(401).send("User Unauthorized");
-		return;
-	}
-	//get channel id 
-	const channelId = req.params.id;
-	const specificChannel = await Channel.find({ id: channelId });
-	//get user
-	var usr = JSON.parse(XUser);
-	//if private and user not member
-	if (specificChannel[0].private){
-		if (!specificChannel[0].members.includes(usr.id)){
-		res.status(403).send("Forbidden User");
-		return;
-		}
-	}
-
-	if(specificChannel[0].creator.id != usr.id){
-		res.status(403).send("Non-creator cannot modify channel");
-		return;
-	}
-	//get updates 
-	const {name, description} = req.body;
-	// update name
-	if(name) {
-		await Channel.where({ id: channelId }).update({ name: name });
-	}
-	// update description
-	if(description) {
-		await Channel.where({ id: channelId }).update({ description: description });
-	}
-	const updatedChannel = await Channel.find({ id: channelId });
-	res.set("Content-Type", "application/json");
-	res.json(updatedChannel);
-
-	let userIDs = [];
-	if (specificChannel[0].private) {
-		//get userIDlist
-		for (let m in specificChannel[0].members){
-			userIDs.push(m.id);
-		}
-	}
-					
-	let data = {
-		type: "channel-update",
-		channel: updatedChannel,
-		userIDs: userIDs
-	};
-
-	rabbitChannel.sendToQueue(rabbQueueName, Buffer.from(JSON.stringify(data)));
-		
-});
-
-app.delete("/v1/channels/:id", async (req, res) => {
-	// verify user authorization
-	var XUser = req.header('X-User');
-	if(!XUser){
-		res.status(401).send("User Unauthorized");
-		return;
-	}
-	//get channel id 
-	const channelId = req.params.id;
-	const specificChannel = await Channel.find({ id: channelId });
-	//get user
-	var usr = JSON.parse(XUser).id;
-	//if private and user not member
-	if (specificChannel[0].private){
-		if (!specificChannel[0].members.includes(usr.id)){
-		res.status(403).send("Forbidden User");
-		return;
-		}
-	}
-
-	if(specificChannel[0].creator.id != usr.id){
-		res.status(403).send("Non-creator cannot delete channel");
-		return;
-	}
-
-    if (specificChannel[0].name != "general") {
-        // delete channel
-        await Channel.deleteOne({ id: channelId });
-        // delete messages for channel
-        await Messages.deleteMany({ channelID: channelId });
-    }
-	
-    res.set("Content-Type", "text/plain");
-	res.send("Successful deletion");
-
-
-	let userIDs = [];
-	if (specificChannel[0].private) {
-		//get userIDlist
-		for (let m in specificChannel[0].members){
-			userIDs.push(m.id);
-		}
-	}
-					
-	let data = {
-		type: "channel-delete",
-		channelID: channelId,
-		userIDs: userIDs
-	};
-
-	rabbitChannel.sendToQueue(rabbQueueName, Buffer.from(JSON.stringify(data)));
-
-});
-
-// for the members of a private channel identified by {channelID}
-app.post("/v1/channels/:id/members", async (req, res) => {
-	// verify user authorization
-	var XUser = req.header('X-User');
-	if(!XUser){
-		res.status(401).send("User Unauthorized");
-		return;
-	}
-	
-	//get channel id 
-	const channelId = req.params.id;
-	const specificChannel = await Channel.find({ id: channelId });
-	//get user
-	var usr = JSON.parse(XUser);
-	//if private and user not member
-	if (specificChannel[0].private){
-		if (!specificChannel[0].members.includes(usr.id)){
-		res.status(403).send("Forbidden User");
-		return;
-		}
-	}
-	if(specificChannel[0].creator.id != usr.id){
-		res.status(403).send("Non-creator cannot add members");
-		return;
-	}
-	//get updates 
-	const {id, email} = req.body;
-	const newUser = {
-		id: id,
-		email: email
-	};
-	const membersList = specificChannel[0].members;
-	membersList.push(newUser);
-	if(membersList) {
-		await Channel.where({ id: channelId }).update({ members: membersList });
-	}
-
-    res.set("Content-Type", "text/plain");
-	res.status(201).send("Success!! User has been added as a member");
-});
-
-app.delete("/v1/channels/:id/members", async (req, res) => {
-	// verify user authorization
-	var XUser = req.header('X-User');
-	if(!XUser){
-		res.status(401).send("User Unauthorized");
-		return;
-	}
-	
-	//get channel id 
-	const channelId = req.params.id;
-	const specificChannel = await Channel.find({ id: channelId });
-	//get user
-	var usr = JSON.parse(XUser);
-	//if private and user not member
-	
-	const memberlist = specificChannel[0].members;
-	if (specificChannel[0].private){
-		if (!specificChannel[0].members.includes(usr.id)){
-		res.status(403).send("Forbidden User");
-		return;
-		}
-	}
-	if(specificChannel[0].creator.id != usr.id){
-		res.status(403).send("Non-creator cannot remove members");
-		return;
-	}
-	
-	//get updates 
-	const {id, email} = req.body;
-	var index = -1;
-	//  remove user ID from array 
-	for (let m in memberlist){
-		const member = memberlist[m].toString();
-		if (member.includes(id) && member.includes(email)){
-			index = m;
-		}
-	}
-	//var index = specificChannel[0].members.indexOf(usr);
-	if (index !== -1) {
-		specificChannel[0].members.splice(index, 1);
-	}
-	const memberslistUpdated = specificChannel[0].members;
-	// update members
-	await Channel.where({ id: channelId }).updateOne({ members: memberslistUpdated });
-
-    res.set("Content-Type", "text/plain");
-	res.status(200).send("Successfully removed user from members");
-});
-
-// for a specific message identified by {messageID}
-app.patch("/v1/messages/:id", async (req, res) => {
-	// verify user authorization
-	var XUser = req.header('X-User');
-	if(!XUser){
-		res.status(401).send("User Unauthorized");
-		return;
-	}
-	//get message id 
-	const messageId = req.params.id;
-	const specificMessage = await Messages.find({ id: messageId });
-	//get user
-	var usr = JSON.parse(XUser);
-	//if user not creator of message
-	if (specificMessage[0].creator.id != usr.id) {
-		res.status(403).send("User cannot edit post they didn't post");
-		return;
-	}
-
- 	const editedAt = new Date();
-	const message = { 
-		channelID: specificMessage[0].channelID, 
-		body: req.body, 
-		createdAt: specificMessage[0].createdAt, 
-		creator: usr,
-		editedAt: editedAt
-	};
-
-	await Messages.where({ id: messageId }).updateOne({message});
-	const updatedMessage = await Messages.find({ id: messageId });
-	res.set("Content-Type", "application/json");
-	res.json(updatedMessage);
-
-
-	const specificChannel = await Channel.find({ id: updatedMessage[0].channelId });
-
-	let userIDs = [];
-	if (specificChannel[0].private) {
-		//get userIDlist
-		for (let m in specificChannel[0].members){
-			userIDs.push(m.id);
-		}
-	}
-					
-	let data = {
-		type: "message-update",
-		message: updatedMessage,
-		userIDs: userIDs
-	};
-
-	rabbitChannel.sendToQueue(rabbQueueName, Buffer.from(JSON.stringify(data)));
-
-});
-
-app.delete("/v1/messages/:id", async (req, res) => {
-	// verify user authorization
-	var XUser = req.header('X-User');
-	if(!XUser){
-		res.status(401).send("User Unauthorized");
-		return;
-	}
-	//get message id 
-	const messageId = req.params.id;
-	const specificMessage = await Messages.find({ id: messageId });
-	//get user
-	var usr = JSON.parse(XUser);
-	//if user not creator of message
-	if (specificMessage[0].creator.id != usr.id) {
-		res.status(403).send("User cannot delete messages they didn't post");
-		return;
-	}
-	// delete message
-    await Messages.deleteOne({ id: messageId });
-    res.set("Content-Type", "text/plain");
-	res.send("Successfullly deleted message");
-
-	const specificChannel = await Channel.find({ id: updatedMessage[0].channelId });
-
-	let userIDs = [];
-	if (specificChannel[0].private) {
-		//get userIDlist
-		for (let m in specificChannel[0].members){
-			userIDs.push(m.id);
-		}
-	}
-					
-	let data = {
-		type: "message-delete",
-		messageID: messageId,
-		userIDs: userIDs
-	};
-
-	rabbitChannel.sendToQueue(rabbQueueName, Buffer.from(JSON.stringify(data)));
-});
-
-const RequestWrapper = (handler, SchemeAndDbForwarder) => {
-	return (req, res) => {
-		handler(req, res, SchemeAndDbForwarder);
-	}
-}
-
-app.post("/v1/channels", RequestWrapper(handlers.postChannelsHandler, { Channel, getRabbitChannel }));
-app.get("/v1/channels", RequestWrapper(handlers.getChannelsHandler, { Channel }));
 
 connect();
 mongoose.connection.on('error', console.error)
@@ -542,33 +86,102 @@ mongoose.connection.on('error', console.error)
 	.once('open', main);
 
 async function main() {
-	amqp.connect(rabbAddr, (err, conn) => {
-		if (err) {
-			console.log("Failed to connect to rabbit instance");
-			process.exit(1);
-		}
-
-		conn.createChannel((err, ch) => {
-			if (err) {
-				console.log("Error creating channel")
-				process.exit(1);
-			}
-
-			ch.assertQueue("queue", { durable: true });
-			rabbitChannel = ch;
-
-
-			ch.consume("queue", (msg) => {
-				console.log(msg.content.toString());
-			}, {
-				noAck: true
-			})
-		});
-
-		app.listen(port, "", () => {
-			console.log(`Server listening on port ${port}`);
-		});
-
-		
+	app.listen(port, "", () => {
+		console.log(`Server listening on port ${port}`);
 	});
+}
+
+function defaultCourses() {
+	// create default courses
+	const info441 = { 
+		id: 1,
+		code: 'INFO441',
+		title: 'Server-side Development',
+		description: 'Introduces server-side web development programming, services, tools, protocols, \
+		best practices and techniques for implementing data-driven and scalable web applications. \
+		Connects topics from human-centered design, information architecture, databases, data analytics and security to build a solution.',
+		credits: 5,
+	};
+	query = new Course(info441);
+	query.save();
+
+	const psych101 = { 
+		id: 2,
+		code: 'PSYCH101',
+		title: 'Introduction to Psychology',
+		description: 'Surveys major areas of psychological science. Core topics include human social behavior, personality, psychological disorders and treatment, learning, memory, human development, biological influences, and research methods. Related topics may include sensation, perception, states of consciousness, thinking, intelligence, language, motivation, emotion, stress and health, cross-cultural psychology, and applied psychology.',
+		credits: 5,
+	};
+	query = new Course(psych101);
+	query.save();
+
+	const cse143 = { 
+		id: 3,
+		code: 'CSE143',
+		title: 'Computer Programing II',
+		description: 'Continuation of CSE 142. Concepts of data abstraction and encapsulation including stacks, queues, linked lists, binary trees, recursion, instruction to complexity and use of predefined collection classes',
+		credits: 5,
+	};
+	query = new Course(cse143);
+	query.save();
+
+	const info200 = { 
+		id: 4,
+		code: 'INFO200',
+		title: 'Computer Programing II',
+		description: 'Information as an object of study, including theories, concepts, and principles of information, information seeking, cognitive processing, knowledge representation and restructuring, and their relationships to physical and intellectual access to information. Development of information systems for storage, organization, and retrieval. Experience in the application of theories, concepts, and principles.',
+		credits: 5,
+	};
+	query = new Course(info200);
+	query.save();
+
+	const math308 = {
+		id: 5,
+		code: 'MATH308',
+		title: 'Matrix Algebra With Applications',
+		description: 'Systems of linear equations, vector spaces, matrices, subspaces, orthogonality, least squares, eigenvalues, eigenvectors, applications. For students in engineering, mathematics, and the sciences.',
+		credits: 3,
+	}
+	query = new Course(math308);
+	query.save();
+
+	const ess100 = {
+		id: 6,
+		code: 'ESS100',
+		title: 'Dinosaurs',
+		description: 'Biology, behavior, ecology, evolution, and extinction of dinosaurs, and a history of their exploration. With dinosaurs as focal point, course also introduces the student to how hypotheses in geological and paleobiological science are formulated and tested.',
+		credits: 2,
+	}
+	query = new Course(ess100);
+	query.save();
+
+	const ess100 = {
+		id: 6,
+		code: 'ESS100',
+		title: 'Dinosaurs',
+		description: 'Biology, behavior, ecology, evolution, and extinction of dinosaurs, and a history of their exploration. With dinosaurs as focal point, course also introduces the student to how hypotheses in geological and paleobiological science are formulated and tested.',
+		credits: 2,
+	}
+	query = new Course(ess100);
+	query.save();
+
+	const educ251 = {
+		id: 7,
+		code: 'EDUC251',
+		title: 'Seeking Educational Equity And Diversity',
+		description: 'Introduces the need for and challenges in establishing educational equity and diversity. Discussions explore theories, historical trends, and ongoing debates. Readings draw from academic and popular sources, and class sessions include use of multimedia resources and experiential activities.',
+		credits: 5,
+	}
+	query = new Course(educ251);
+	query.save();
+
+	const ling200 = {
+		id: 8,
+		code: 'LING200',
+		title: 'Introduction To Linguistics',
+		description: 'Language as the fundamental characteristic of the human species; diversity and complexity of human languages; phonological and grammatical analysis; dimensions of language use; and language acquisition and historical language change.',
+		credits: 5,
+	}
+	query = new Course(ling200);
+	query.save();
 }
