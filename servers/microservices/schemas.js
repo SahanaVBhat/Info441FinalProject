@@ -20,16 +20,14 @@ const evaluation = new Schema({
 });
 
 
-const message = new Schema({
+const course = new Schema({
 	id: {type:Number, required:true, unique:true},
-    channelID: {type:Number, required:true},
-    body: {type:String, required:true},
-    createdAt: { type: Date, required: true},
-    creator: {type:{id:Number, email:String}},
-    editedAt: Date
+    code: {type: String, require: true},
+    title: String, 
+    description: String, 
+    credits: Number
 });
 
 module.exports = {
-    channel,
-    message
+    evaluation, course
 };
