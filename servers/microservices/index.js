@@ -88,8 +88,8 @@ app.post("/v1/evaluation/", async (req, res) => {
 		res.status(401).send("User Unauthorized");
 		return;
 	}
-    const { studentID, courseID, instructors, year, quarter, creditType, credit, workload, gradingTechniques, description } = req.body;
-	//get user
+    const { courseID, instructors, year, quarter, creditType, credit, workload, gradingTechniques, description } = req.body;
+	//to get studentID
 	var usr = JSON.parse(XUser);
 	//get number of documents in evaluation
 	const Lastid = await Evaluation.countDocuments({});
@@ -97,7 +97,7 @@ app.post("/v1/evaluation/", async (req, res) => {
     const createdAt = new Date();
 	const evaluation = { 
 		id: id,
-		studentID: studentID,
+		studentID: usr.id,
         courseID: courseID,
         instructors: instructors,
         year: year,
@@ -107,7 +107,6 @@ app.post("/v1/evaluation/", async (req, res) => {
         workload: workload,
         gradingTechniques: gradingTechniques,
 		description: description,
-		creator : usr,
         createdAt: createdAt
 	};
 
@@ -138,7 +137,7 @@ app.patch("/v1/evaluation/:id", async (req, res) => {
 	//get user
 	var usr = JSON.parse(XUser);
 	//if user not creator of message
-	if (specificEvaluation[0].creator.ID != usr.id) {
+	if (specificEvaluation[0].studentID != usr.id) {
 		res.status(403).send("Forbidden User");
 		return;
 	}
