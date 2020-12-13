@@ -136,7 +136,7 @@ app.patch("/v1/evaluation/:id", async (req, res) => {
 	const specificEvaluation = await Evaluation.find({ id: evaluationId });
 	//get user
 	var usr = JSON.parse(XUser);
-	//if user not creator of message
+	//if user not creator of Evaluation
 	if (specificEvaluation[0].studentID != usr.id) {
 		res.status(403).send("Forbidden User");
 		return;
@@ -149,6 +149,29 @@ app.patch("/v1/evaluation/:id", async (req, res) => {
 	res.set("Content-Type", "application/json");
 	res.json(updatedEvaluation);
 
+});
+
+app.delete("/v1/evaluation/:id", async (req, res) => {
+	// verify user authorization
+	var XUser = req.header('X-User');
+	if(!XUser){
+		res.status(401).send("User Unauthorized");
+		return;
+	}
+	//get evaluation id 
+	const evaluationId = req.params.id;
+	const specificEvaluation = await Evaluation.find({ id: evaluationId });
+	//get user
+	var usr = JSON.parse(XUser);
+	//if user not creator of Evaluation
+	if (specificEvaluation[0].studentID != usr.id) {
+		res.status(403).send("Forbidden User");
+		return;
+	}
+	// delete Evaluation
+    await Evaluation.deleteOne({ id: evaluationId });
+    res.set("Content-Type", "text/plain");
+	res.send("Successfullly deleted evaluation");
 });
 
 connect();
