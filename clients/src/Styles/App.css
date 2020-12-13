@@ -1,3 +1,18 @@
 body {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+button > img {
+  height: 20%;
+  width: 20%;
+  margin-bottom: 0.5rem;
+}
+.headerButton {
+  border: none;
+  background-color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  margin: 0.5rem;
+}
+header {
+  background-color: green;
 }
