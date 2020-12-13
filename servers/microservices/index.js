@@ -80,6 +80,78 @@ app.get("/v1/courses/:courseID", async (req, res) => {
     }
 });
 
+//add new evaluation 
+app.post("/v1/evaluation/", async (req, res) => {
+	// verify user authorization
+	var XUser = req.header('X-User');
+	if(!XUser){
+		res.status(401).send("User Unauthorized");
+		return;
+	}
+    const { studentID, courseID, instructors, year, quarter, creditType, credit, workload, gradingTechniques, description } = req.body;
+	//get user
+	var usr = JSON.parse(XUser);
+	//get number of documents in evaluation
+	const Lastid = await Evaluation.countDocuments({});
+	const id = Lastid+1;
+    const createdAt = new Date();
+	const evaluation = { 
+		id: id,
+		studentID: studentID,
+        courseID: courseID,
+        instructors: instructors,
+        year: year,
+        quarter: quarter,
+        creditType: creditType,
+        credit: credit,
+        workload: workload,
+        gradingTechniques: gradingTechniques,
+		description: description,
+		creator : usr,
+        createdAt: createdAt
+	};
+
+	const query = new Evaluation(evaluation);
+	query.save((err, newEvaluation) => {
+		if (err) {
+			console.log(err);
+			res.status(500).send("Unable to create new evaluation");
+			return;
+        }
+        
+        res.set("Content-Type", "application/json");
+        res.status(201).json(newEvaluation);
+    });
+});
+
+//update evaluation text description based on specific evaluation ID
+app.patch("/v1/evaluation/:id", async (req, res) => {
+	// verify user authorization
+	var XUser = req.header('X-User');
+	if(!XUser){
+		res.status(401).send("User Unauthorized");
+		return;
+	}
+	//get evaluation id 
+	const evaluationId = req.params.id;
+	const specificEvaluation = await Evaluation.find({ id: evaluationId });
+	//get user
+	var usr = JSON.parse(XUser);
+	//if user not creator of message
+	if (specificEvaluation[0].creator.ID != usr.id) {
+		res.status(403).send("Forbidden User");
+		return;
+	}
+	// get new description 
+	const {description} = req.body;
+	// update members
+	await Evaluation.where({ id: evaluationId }).updateOne({ description: description });
+	const updatedEvaluation = await Evaluation.find({ id: evaluationId });
+	res.set("Content-Type", "application/json");
+	res.json(updatedEvaluation);
+
+});
+
 connect();
 mongoose.connection.on('error', console.error)
 	.on('disconnected', connect)

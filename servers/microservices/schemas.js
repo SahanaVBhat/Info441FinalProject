@@ -15,6 +15,7 @@ const evaluation = new Schema({
     description: {type: string},
     likedUsers: {type:[{studentID:Number}]},
     dislikedUsers: {type:[{studentID:Number}]},
+    creator: {type:{id:Number, email:String}},
     createdAt: { type: Date, required: true},
     editedAt: Date
 });
