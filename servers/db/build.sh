@@ -1,8 +1,8 @@
 GOOS=linux go build
-docker build -t svbhat/sqldatabase .
+docker build -t svbhat/finalprojsqldatabase .
 go clean
 
-docker push svbhat/sqldatabase
+docker push svbhat/finalprojsqldatabase
 
-ssh ec2-user@api.info441-deploy.me  < deploy.sh 
+ssh ec2-user@apicourseeval.info441-deploy.me  < deploy.sh 
 

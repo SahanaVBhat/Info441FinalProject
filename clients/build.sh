@@ -1,8 +1,8 @@
 GOOS=linux go build
-docker build -t svbhat/client .
+docker build -t svbhat/finalprojclient .
 go clean
 
-docker push svbhat/client
+docker push svbhat/finalprojclient
 
-ssh ec2-user@info441-deploy.me  < deploy.sh 
+ssh ec2-user@courseeval.info441-deploy.me  < deploy.sh 
 

@@ -1,6 +1,6 @@
 docker rm -f apiserver
 
-docker pull svbhat/gateway
+docker pull svbhat/finalprojgateway
 
 export SESSIONKEY="key"
 export MYSQL_ROOT_PASSWORD="password"
@@ -13,11 +13,11 @@ export SUMMARYADDR="http://summary:80"
 docker run -d \
     -p 443:443  \
     -v /etc/letsencrypt:/etc/letsencrypt:ro \
-    -e TLSCERT=/etc/letsencrypt/live/api.info441-deploy.me/fullchain.pem \
-    -e TLSKEY=/etc/letsencrypt/live/api.info441-deploy.me/privkey.pem \
+    -e TLSCERT=/etc/letsencrypt/live/apicourseeval.info441-deploy.me/fullchain.pem \
+    -e TLSKEY=/etc/letsencrypt/live/apicourseeval.info441-deploy.me/privkey.pem \
     -e ADDR=:443 \
     -e SESSIONKEY=$SESSIONKEY -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -e MYSQL_DATABASE=$MYSQL_DATABASE -e DSN=$DSN -e REDISADDR=$REDISADDR -e MESSAGESADDR=$MESSAGESADDR -e SUMMARYADDR=$SUMMARYADDR \
     --name apiserver \
     --network info441 \
-    svbhat/gateway
+    svbhat/finalprojgateway
 

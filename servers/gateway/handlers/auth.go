@@ -1,14 +1,15 @@
 package handlers
 
 import (
-	"Info441FinalProject/servers/gateway/models/users"
-	"Info441FinalProject/servers/gateway/sessions"
 	"encoding/json"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/models/users"
+	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/sessions"
 )
 
 //handles requests for the "users" resource.

@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"Info441FinalProject/servers/gateway/models/users"
 	"time"
+
+	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/models/users"
 )
 
 type SessionState struct {

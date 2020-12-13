@@ -80,6 +80,22 @@ app.get("/v1/courses/:courseID", async (req, res) => {
     }
 });
 
+// get all evaluations for that course
+app.get("/v1/evaluation/:courseId", async (req, res) => {
+	// 200: Successful response with all evals in that course
+	// 500: Internal server error 
+	try {
+		const courseID = req.params['courseID'];
+
+		const evaluations = await Evaluation.find({ course: courseID });
+
+		res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(evaluations);
+	} catch {
+		res.status(500).send("There was an issue getting evaluations for this course");
+	}
+});
+
 //add new evaluation 
 app.post("/v1/evaluation/", async (req, res) => {
 	// verify user authorization

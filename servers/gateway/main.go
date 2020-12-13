@@ -1,9 +1,6 @@
 package main
 
 import (
-	"Info441FinalProject/servers/gateway/handlers"
-	"Info441FinalProject/servers/gateway/models/users"
-	"Info441FinalProject/servers/gateway/sessions"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -15,6 +12,10 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/handlers"
+	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/models/users"
+	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/sessions"
 
 	"github.com/go-redis/redis"
 )
@@ -101,7 +102,7 @@ func main() {
 			microserviceURLs = append(microserviceURLs, url)
 		}
 		serverName := microserviceURLs[0]
-		if len(micorserviceURLs) > 1 {
+		if len(microserviceURLs) > 1 {
 			rand.Seed(time.Now().UnixNano())
 			serverNum := rand.Intn(len(microserviceURLs))
 			serverName = microserviceURLs[serverNum]
@@ -172,10 +173,10 @@ func main() {
 	mux.HandleFunc("/v1/sessions", context.SessionsHandler)
 	mux.HandleFunc("/v1/sessions/", context.SpecificSessionHandler)
 
-	mux.HandleFunc("/v1/courses", microserviceProxy)
-	mux.HandleFunc("/v1/courses/", microserviceProxy)
-	mux.HandleFunc("/v1/evaluations", microserviceProxy)
-	mux.HandleFunc("/v1/evaluations/", microserviceProxy)
+	mux.Handle("/v1/courses", microserviceProxy)
+	mux.Handle("/v1/courses/", microserviceProxy)
+	mux.Handle("/v1/evaluations", microserviceProxy)
+	mux.Handle("/v1/evaluations/", microserviceProxy)
 	// mux.Handle("/v1/channels", messageProxy) // register the proxies
 	// mux.Handle("/v1/channels/", messageProxy)
 	// mux.Handle("/v1/messages", messageProxy)

@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"Info441FinalProject/servers/gateway/models/users"
-	"Info441FinalProject/servers/gateway/sessions"
+	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/models/users"
+	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/sessions"
 )
 
 type HandlerContext struct {
