@@ -265,16 +265,6 @@ function defaultCourses() {
 	query = new Course(ess100);
 	query.save();
 
-	const ess100 = {
-		id: 6,
-		code: 'ESS100',
-		title: 'Dinosaurs',
-		description: 'Biology, behavior, ecology, evolution, and extinction of dinosaurs, and a history of their exploration. With dinosaurs as focal point, course also introduces the student to how hypotheses in geological and paleobiological science are formulated and tested.',
-		credits: 2,
-	}
-	query = new Course(ess100);
-	query.save();
-
 	const educ251 = {
 		id: 7,
 		code: 'EDUC251',

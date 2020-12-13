@@ -12,20 +12,20 @@ const evaluation = new Schema({
     credit: {type: Number},
     workload: {type: Number},
     gradingTechniques: {type: Number},
-    description: {type: string},
+    description: {type: String},
     likedUsers: {type:[{studentID:Number}]},
     dislikedUsers: {type:[{studentID:Number}]},
     createdAt: { type: Date, required: true},
-    editedAt: Date
+    editedAt: {type: Date}
 });
 
 
 const course = new Schema({
 	id: {type:Number, required:true, unique:true},
     code: {type: String, require: true},
-    title: String, 
-    description: String, 
-    credits: Number
+    title: {type: String}, 
+    description: {type: String}, 
+    credits: {type: Number}
 });
 
 module.exports = {

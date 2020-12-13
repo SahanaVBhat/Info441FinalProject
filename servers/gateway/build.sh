@@ -1,4 +1,4 @@
-GOOS=linux go build -o gateway
+GOOS=linux go build
 docker build -t svbhat/finalprojgateway .
 go clean
 
