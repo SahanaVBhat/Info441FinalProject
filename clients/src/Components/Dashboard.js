@@ -19,7 +19,7 @@ class Dashboard extends Component {
               </div>
               <div class="card-body">
                 <input type="text" class="btn-lg" id="textInput"></input>
-                <button type="button" class="btn personalButton btn-lg">Search</button>
+                <button type="button" class="btn btn-lg">Search</button>
               </div>
             </div>
 
