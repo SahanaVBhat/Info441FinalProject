@@ -8,11 +8,11 @@ button > img {
 }
 .headerButton {
   border: none;
-  background-color: #ffffff;
+  background-color: #c9cbff;
   display: inline-flex;
   align-items: center;
   margin: 0.5rem;
 }
 header {
-  background-color: green;
+  background-color: #c9cbff;
 }
