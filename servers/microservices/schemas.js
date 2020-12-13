@@ -9,7 +9,7 @@ const evaluation = new Schema({
     year: {type: Date},
     quarter: {type: String},
     creditType: {type: String},
-    credit: {type: Number},
+    credits: {type: Number},
     workload: {type: Number},
     gradingTechniques: {type: Number},
     description: {type: String},

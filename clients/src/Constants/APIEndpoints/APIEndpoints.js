@@ -1,5 +1,5 @@
 export default {
-    base: "https://api.info441-deploy.me",
+    base: "https://apicourseeval.info441-deploy.me",
     testbase: "https://localhost:4000",
     handlers: {
         users: "/v1/users",

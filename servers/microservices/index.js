@@ -40,7 +40,7 @@ app.get("/v1/courses", async (req, res) => {
 
 	try {
 		const courses = await Course.find();
-		res.setHeader('Content-Type', 'application/json');
+		res.set('Content-Type', 'application/json');
         res.status(200).json(courses);
 	} catch {
 		res.status(500).send("There was an issue getting courses");
@@ -51,7 +51,6 @@ app.get("/v1/courses", async (req, res) => {
 app.get("/v1/courses/:courseID", async (req, res) => {
     // 200: Successful response with course information
     // 401: Cannot verify Course ID 
-    // 415: Cannot decode body or receive unsupported body
 	// 500: Internal server error
 	
     try {
@@ -63,17 +62,17 @@ app.get("/v1/courses/:courseID", async (req, res) => {
 
         // get course with id from req
         const courseID = req.params['courseID'];
-        var course = {};
-        Course.findById(courseID, function(err, c) {
-            if (err) {
-                res.status(401).send("Could not find course with the given ID");
-                return;
-            }
-            course = c;
-        });
+        const course = await Course.find({ id: courseID });
+        // Course.findById(courseID, function(err, c) {
+        //     if (err) {
+        //         res.status(401).send("Could not find course with the given ID");
+        //         return;
+        //     }
+        //     course = c;
+        // });
         //const specificCourse = await Channel.find({id: courseID});
 
-        res.setHeader("Content-Type", "application/json");
+        res.set("Content-Type", "application/json");
         res.status(200).json(course);
     } catch {
         res.status(500).send("There was an issue getting the course");
@@ -81,15 +80,15 @@ app.get("/v1/courses/:courseID", async (req, res) => {
 });
 
 // get all evaluations for that course
-app.get("/v1/evaluation/:courseId", async (req, res) => {
+app.get("/v1/courses/:courseID/evaluations", async (req, res) => {
 	// 200: Successful response with all evals in that course
 	// 500: Internal server error 
 	try {
 		const courseID = req.params['courseID'];
 
-		const evaluations = await Evaluation.find({ course: courseID });
+		const evaluations = await Evaluation.find({ courseID: courseID });
 
-		res.setHeader('Content-Type', 'application/json');
+        res.set("Content-Type", "application/json");
         res.status(200).json(evaluations);
 	} catch {
 		res.status(500).send("There was an issue getting evaluations for this course");
@@ -97,14 +96,17 @@ app.get("/v1/evaluation/:courseId", async (req, res) => {
 });
 
 //add new evaluation 
-app.post("/v1/evaluation/", async (req, res) => {
+app.post("/v1/evaluations/", async (req, res) => {
 	// verify user authorization
 	var XUser = req.header('X-User');
 	if(!XUser){
 		res.status(401).send("User Unauthorized");
 		return;
 	}
-    const { courseID, instructors, year, quarter, creditType, credit, workload, gradingTechniques, description } = req.body;
+
+    const { courseCode, instructors, year, quarter, creditType, credits, workload, gradingTechniques, description } = req.body;
+	const course = await Course.find({ code: courseCode });
+
 	//to get studentID
 	var usr = JSON.parse(XUser);
 	//get number of documents in evaluation
@@ -114,12 +116,12 @@ app.post("/v1/evaluation/", async (req, res) => {
 	const evaluation = { 
 		id: id,
 		studentID: usr.id,
-        courseID: courseID,
+        courseID: course.id,
         instructors: instructors,
         year: year,
         quarter: quarter,
         creditType: creditType,
-        credit: credit,
+        credits: credits,
         workload: workload,
         gradingTechniques: gradingTechniques,
 		description: description,
@@ -140,7 +142,7 @@ app.post("/v1/evaluation/", async (req, res) => {
 });
 
 //update evaluation text description based on specific evaluation ID
-app.patch("/v1/evaluation/:id", async (req, res) => {
+app.patch("/v1/evaluations/:id", async (req, res) => {
 	// verify user authorization
 	var XUser = req.header('X-User');
 	if(!XUser){
@@ -167,7 +169,7 @@ app.patch("/v1/evaluation/:id", async (req, res) => {
 
 });
 
-app.delete("/v1/evaluation/:id", async (req, res) => {
+app.delete("/v1/evaluations/:id", async (req, res) => {
 	// verify user authorization
 	var XUser = req.header('X-User');
 	if(!XUser){
@@ -283,5 +285,25 @@ function defaultCourses() {
 		credits: 5,
 	}
 	query = new Course(ling200);
+	query.save();
+
+	const testEval = {
+		id: 1,
+		studentID: 1,
+		courseID: 1,
+		instructors: [{"name":"Kyle Thayer"}],
+		year: new Date().getYear(),
+		quarter: 'AU20',
+		creditType: 'I&S',
+		credits: 5,
+		workload: 10,
+		gradingTechniques: 3,
+		description: 'Most difficult Info class',
+		likedUsers: [{"studentID":1}],
+		dislikedUsers: [{"studentID":2}],
+		createdAt: new Date(),
+		editedAt: new Date()
+	}
+	query = new Evaluation(testEval);
 	query.save();
 }
