@@ -102,7 +102,7 @@ app.get("/v1/courses", async (req, res) => {
 		const query = req.query['code'] ? req.query['code'] : null;
 
 		// get courses with matching code 
-		const matchingCourses = await Course.find({course: {"$regex": query, "$options": "i"}})
+		const matchingCourses = await Course.find({code: {"$regex": query, "$options": "i"}})
 		
 		// return courses 
 		res.set ("Content-Type", "application/json");

@@ -4,6 +4,7 @@ import Footer from "./Footer";
 // import CardList from "./CardList";
 import Header from "./Header";
 import api from './../Constants/APIEndpoints/APIEndpoints';
+import Errors from './Errors/Errors';
 
 
 class Dashboard extends Component {
@@ -30,10 +31,20 @@ class Dashboard extends Component {
 
     this.state = {
       courseCode: "",
-      results: []
+      results: [],
+      error: ""
     };
   }
 
+
+  /**
+   * @description setError sets the error message
+   */
+  setError = (error) => {
+      this.setState({ error })
+  }
+
+  // GET /v1/courses/?code=
   getInfo = async () => {
     const courseCode = this.state.courseCode;
     //const sendData = { courseCode };
@@ -49,6 +60,8 @@ class Dashboard extends Component {
     this.setState({
       results: courses
     })
+    this.setError("");
+
   }
 
   handleInputChange = () => {
@@ -66,6 +79,7 @@ class Dashboard extends Component {
 
 
   render() {
+    const { error } = this.state;
     return (
       <div>
         <div>
@@ -83,7 +97,9 @@ class Dashboard extends Component {
                   ref={input => this.search = input}
                   onChange={this.handleInputChange}
                 />
-                <p>{this.state.query}</p>
+                <Errors error={error} setError={this.setError} />
+
+                <p>{this.state.results}</p>
                 <button type="button" class="btn personalButton btn-lg">Search</button>
 
               </form>
