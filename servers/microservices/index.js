@@ -33,15 +33,29 @@ app.all('*',function(req,res,next)
     next();
 });
 
-// get all courses
+// get all courses or courses that match search param
 app.get("/v1/courses", async (req, res) => {
 	// 200: Successful response with all course information
 	// 500: Internal server error 
 
 	try {
-		const courses = await Course.find();
-		res.set('Content-Type', 'application/json');
-        res.status(200).json(courses);
+		// get search query 
+		const query = req.query['code'] ? req.query['code'] : null;
+
+		if (query == null) {
+			// get all courses
+			const courses = await Course.find();
+			res.set('Content-Type', 'application/json');
+			res.status(200).json(courses);
+		} else {
+			// get courses with matching code 
+			const matchingCourses = await Course.find({course: {"$regex": query, "$options": "i"}})
+			
+			// return courses 
+			res.set ("Content-Type", "application/json");
+			res.status(200).json(matchingCourses);
+		}
+		
 	} catch {
 		res.status(500).send("There was an issue getting courses");
 	}
@@ -94,23 +108,6 @@ app.get("/v1/courses/:courseID/evaluations", async (req, res) => {
 		res.status(500).send("There was an issue getting evaluations for this course");
 	}
 });
-
-// returns all courses with code that matches user search query 
-app.get("/v1/courses", async (req, res) => {
-	try {
-		// get search query 
-		const query = req.query['code'] ? req.query['code'] : null;
-
-		// get courses with matching code 
-		const matchingCourses = await Course.find({course: {"$regex": query, "$options": "i"}})
-		
-		// return courses 
-		res.set ("Content-Type", "application/json");
-		res.status(200).json(matchingCourses);
-	} catch {
-		res.status(500).send("There was an issue getting courses");
-	}
-})
 
 //add new evaluation 
 app.post("/v1/evaluations/", async (req, res) => {
