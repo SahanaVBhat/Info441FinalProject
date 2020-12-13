@@ -9,14 +9,13 @@ Currently there is no resource for UW students to see specific reviews and sugge
 ### Architectural diagram mapping 
 
 User Client \
-Gateway layer \
-Authentication layer - verify student is UW student \
-Redis session store \
-Mongoose database - information of all the evaluations/ratings of a course, information of students \
-Search microservice - search for evaluations based on major/number \
-Evaluation submission microservice - submit a form for evaluation of class
+Gateway layer - verify student is UW student, receive session information \
+Redis session store - save session information \
+Mongoose database - information of all the evaluations/ratings of a course \
+Course microservice - search for evaluations based on major/number \
+Evaluation microservice - submit a form for evaluation of class
 
-![](./InfrastructureDiagram.png)
+![](./InfrastructureDiagramNEW.jpeg)
 https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
 
 ### User Stories and Priority
@@ -162,6 +161,9 @@ We use MongoDB as our data storage for courses and evaluations, Redis as the sto
 		password: string \
 	}
 ```
+
+## Initial Infrastructure Diagram
+![](./InfrastructureDiagram.png)
 
 
 
