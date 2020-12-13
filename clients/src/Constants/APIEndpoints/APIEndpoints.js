@@ -8,6 +8,8 @@ export default {
         sessions: "/v1/sessions",
         sessionsMine: "/v1/sessions/mine",
         resetPasscode: "/v1/resetcodes",
-        passwords: "/v1/passwords/"
+        passwords: "/v1/passwords/",
+        courses: "/v1/courses",
+        evaluations: "/v1/evaluations"
     }
 }

@@ -20,18 +20,18 @@ const connect = () => {
 // create & add default courses
 defaultCourses();
 
-app.all('*',function(req,res,next)
-{
-    if (!req.get('Origin')) return next();
+// app.all('*',function(req,res,next)
+// {
+//     if (!req.get('Origin')) return next();
 
-    res.set('Access-Control-Allow-Origin','http://info441-deploy.me');
-    res.set('Access-Control-Allow-Methods','GET,POST,DELETE,PATCH');
-    res.set('Access-Control-Allow-Headers','X-Requested-With,Content-Type');
+//     res.set('Access-Control-Allow-Origin','*');
+//     res.set('Access-Control-Allow-Methods','GET,POST,DELETE,PATCH');
+//     res.set('Access-Control-Allow-Headers','X-Requested-With,Content-Type');
 
-    if ('OPTIONS' == req.method) return res.send(200);
+//     if ('OPTIONS' == req.method) return res.send(200);
 
-    next();
-});
+//     next();
+// });
 
 // get all courses
 app.get("/v1/courses", async (req, res) => {
