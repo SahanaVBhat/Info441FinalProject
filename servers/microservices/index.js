@@ -63,28 +63,13 @@ app.get("/v1/courses", async (req, res) => {
 
 // get specific course based on given course ID 
 app.get("/v1/courses/:courseID", async (req, res) => {
-    // 200: Successful response with course information
-    // 401: Cannot verify Course ID 
+    // 200: Successful response with course information 
 	// 500: Internal server error
 	
     try {
-        // // if getting course ID with body 
-        // const courseID = JSON.stringify(req.body);
-        // if (!courseID) {
-        //     res.status(415).send("Error: unsupported body")
-        // }
-
         // get course with id from req
         const courseID = req.params['courseID'];
         const course = await Course.find({ id: courseID });
-        // Course.findById(courseID, function(err, c) {
-        //     if (err) {
-        //         res.status(401).send("Could not find course with the given ID");
-        //         return;
-        //     }
-        //     course = c;
-        // });
-        //const specificCourse = await Channel.find({id: courseID});
 
         res.set("Content-Type", "application/json");
         res.status(200).json(course);
