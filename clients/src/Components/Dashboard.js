@@ -44,11 +44,11 @@ class Dashboard extends Component {
       this.setState({ error })
   }
 
-  // GET /v1/courses/?code=
+  // GET /v1/courses?code=
   getInfo = async () => {
     const courseCode = this.state.courseCode;
     //const sendData = { courseCode };
-    const response = await fetch(api.base + api.handlers.courses + '/?code=' + courseCode, {
+    const response = await fetch(api.base + api.handlers.courses + '?code=' + courseCode, {
       method: "GET",
     });
     if (response.status >= 300) {
@@ -57,11 +57,16 @@ class Dashboard extends Component {
       return;
     }
     const courses = await response.json();
-    this.setState({
-      results: courses
-    })
-    this.setError("");
-
+    if (courses.length > 1) {  
+      this.setState({
+        results: [courses[0].id, courses[0].code, courses[0].title, courses[0].description]
+      })
+      this.setError("");
+    } else {
+      this.setState({
+        results: ["no results"]
+      })
+    }
   }
 
   handleInputChange = () => {
@@ -97,12 +102,11 @@ class Dashboard extends Component {
                   ref={input => this.search = input}
                   onChange={this.handleInputChange}
                 />
-                <Errors error={error} setError={this.setError} />
 
-                <p>{this.state.results}</p>
                 <button type="button" class="btn personalButton btn-lg">Search</button>
 
               </form>
+              <Errors error={error} setError={this.setError} />
             </div>
           </div>
 
