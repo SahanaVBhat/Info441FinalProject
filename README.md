@@ -31,37 +31,50 @@ https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
 ### User 
 `v1/user`: saves users who make accounts 
 * `GET` (`application/json`) : to get a specific user account based on User ID. 
-	* 200: Successful response with user information 
-	* 401: Cannot verify User ID .
-	* 415: Cannot decode body or receive unsupported body.
-	* 500: Internal server error.
+	* 200: Successful response with user information
+	* 400: Bad request if ID is not in valid format
+	* 401: Cannot verify User ID 
+	* 404: User is not found with given ID
+	* 405: Method is not 'GET'
+	<!-- * 415: Cannot decode body or receive unsupported body
+	500: Internal server error. -->
 
 * `POST` (`application/json`) : to create new user account, Sign up
-	* 201: created new user account
-	* 400: bad request if user account already exists
+	* 200: created new user account
+	* 400: bad request if user account already exists, incorrect body
 	* 401: unauthorized user information access
-	* 500: internal server error
+	* 405: method is not 'POST'
+	* 415: content-type is not 'application/json'
+	<!-- * 500: internal server error -->
  
 * `PATCH` (`application/json`) : to update user email Id or password
-	* 201: updated user information
-	* 400: bad request if user account already exists
+	* 200: Successful response with updated user information
+	* 400: bad request if ID is not in valid format, cannot decode body 
 	* 401: unauthorized user information access
-	* 500: internal server error
+	* 405: Method is not 'PATCH'
+	* 415: Receive unsupported body, unable to update user
+	<!-- * 500: internal server error -->
 
 ### Session
 `/v1/sessions`: saves user session when logged in 
 * `POST` (`application/json`) : Post new user session
-	* 201: created a new session for a user on sign in
+	<!-- * 201: created a new session for a user on sign in
 	* 415: unsupported media
-	* 500: internal server error
+	* 500: internal server error -->
+	* 201: created a new session for a user on sign in
+	* 400: bad request if body is not correct
+	* 401: user does not exist or cannot be authenticated
+	* 405: method not allowed 
+	* 415: unsupported media
 
-* `GET` (`application/json`) : Get current user session
+<!-- * `GET` (`application/json`) : Get current user session
 	* 400: bad request
-	* 403: forbidden request if not user's session
+	* 403: forbidden request if not user's session -->
 
 * `DELETE`: Delete user session after user logs out
 	* 400: bad request
 	* 403: forbidden request if not user's session
+	* 405: method is not 'DELETE'
 
 ### Course 
 `v1/courses` :  information on all the courses
@@ -90,12 +103,14 @@ https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
 `v1/evaluations/{id}`: information on the specific evaluation submitted 
 * `PATCH` (`application/json`) : to update evaluation text description, rating etc
 	* 201: Updated evaluation parameters
-	* 401: Unauthorized user information access
+	* 401: unauthorized user information acces
+	* 403: User is not creator (forbidden access)
 	* 500: Internal server error
 
 * `DELETE`: students who posted the evaluations will be able to delete their evaluations 
 	* 200: Successfully deletes student evaluations.
 	* 401: Cannot verify review ID
+	* 403: User is not creator (forbidden access)
 	* 500: Internal server error
 
 ## Data Models
