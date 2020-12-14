@@ -3,6 +3,7 @@ import "../Styles/App.css";
 import api from './../Constants/APIEndpoints/APIEndpoints';
 import Errors from './Errors/Errors';
 import Footer from "./Footer";
+import CardList from "./CardList";
 
 class Home extends Component {
   // submitForm = async (e) => {
@@ -107,8 +108,7 @@ class Home extends Component {
             <main>
               <div>
                 <section>
-                  {/* <CardList/> */}
-                  <p>{this.state.results}</p>
+                  <CardList classInfo={this.state.results}/>
                 </section>
               </div>
             </main>

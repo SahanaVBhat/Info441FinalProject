@@ -1,19 +1,14 @@
 import React, { Component } from "react";
-import "../style.css";
+import "../Styles/App.css";
 
 class Card extends Component {
   render() {
     let topic = this.props.category;
-    let pic = topic.img;
     return (
       <div className="card">
-        <div className="card-list">
-        <a href={topic.link}>
-        {/* card image */}
         <div className="card-body">
-          <h4 className="card-title">{topic.name}</h4>
-        </div>
-        </a>
+          <h3 className="card-title">{this.props.course} {this.props.name}</h3>
+          <h4>{this.props.d}</h4>
         </div>
       </div>
     );
@@ -21,13 +16,7 @@ class Card extends Component {
 }
 class CardList extends Component {
   render() {
-    let newList = CATEGORY_DATA.map((type) => {
-      if (type.cuisine === this.props.cuisine) {
-        return <Card key={type.name} category={type} />;
-      }
-    });
-
-    return <div className="card-deck">{newList}</div>;
+    return <Card course={this.props.classInfo[1]} name={this.props.classInfo[2]} d={this.props.classInfo[3]}/>;
   }
 }
 export default CardList;
