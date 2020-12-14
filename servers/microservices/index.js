@@ -35,7 +35,8 @@ defaultCourses();
 
 // get all courses or courses that match search param
 app.get("/v1/courses", async (req, res) => {
-	// 200: Successful response with all course information
+	// Response codes:
+	// 200: Successful response with ourse information
 	// 500: Internal server error 
 
 	try {
@@ -80,6 +81,7 @@ app.get("/v1/courses/:courseID", async (req, res) => {
 
 // get all evaluations for that course
 app.get("/v1/courses/:courseID/evaluations", async (req, res) => {
+	// Response codes:
 	// 200: Successful response with all evals in that course
 	// 500: Internal server error 
 	try {
@@ -96,6 +98,11 @@ app.get("/v1/courses/:courseID/evaluations", async (req, res) => {
 
 //add new evaluation 
 app.post("/v1/evaluations/", async (req, res) => {
+	// Response codes: 
+	// 201: Created new evaluation
+	// 401: Unauthorized user information access
+	// 500: Internal server error
+
 	// verify user authorization
 	var XUser = req.header('X-User');
 	if(!XUser){
@@ -150,6 +157,11 @@ app.post("/v1/evaluations/", async (req, res) => {
 
 //update evaluation text description based on specific evaluation ID
 app.patch("/v1/evaluations/:id", async (req, res) => {
+	// Response codes: 
+	// 201: Updated evaluation parameters
+	// 401: Unauthorized user information access
+	// 500: Internal server error
+
 	// verify user authorization
 	var XUser = req.header('X-User');
 	if(!XUser){
@@ -177,7 +189,11 @@ app.patch("/v1/evaluations/:id", async (req, res) => {
 });
 
 app.delete("/v1/evaluations/:id", async (req, res) => {
-	// verify user authorization
+	// Response codes: 
+	// 200: Successfully deletes student evaluations.
+	// 401: Cannot verify review ID
+	// 500: Internal server error
+
 	var XUser = req.header('X-User');
 	if(!XUser){
 		res.status(401).send("User Unauthorized");
@@ -294,6 +310,7 @@ function defaultCourses() {
 	query = new Course(ling200);
 	query.save();
 
+	// create defaul test eval 
 	const testEval = {
 		id: 1,
 		studentID: 1,
