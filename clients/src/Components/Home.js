@@ -30,6 +30,7 @@ class Home extends Component {
     this.state = {
       courseCode: "",
       results: [],
+      evals: [],
       error: ""
     };
   }
@@ -67,6 +68,37 @@ class Home extends Component {
     }
   }
 
+  getEvals = async (courseID) => {
+    const response = await fetch(api.base + api.handlers.courses + "/" + courseID + "/evaluations", {method: "GET"});
+    if (response.status >= 300) {
+      const error = await response.text();
+      this.setError(error);
+      return;
+    }
+
+    const evals = await response.json();
+    
+    // check if there is more than one evaluation for course 
+    if (evals.length > 0) {
+      // get current evals saved in state
+      let currEvals = this.state.evals;
+
+      // for each evaluation:
+      // -- create array containg all eval information to display
+      // -- add eval to currEvals (for state)
+      evals.forEach(function(eval) {
+        let evalInfo = [eval.id, eval.studentID, eval.courseID, eval.instructors, eval.year, eval.quarter, eval.creditType, eval.credits, eval.workload, eval.gradingTechniques, eval.description, eval.likedUsers, eval.dislikedUsers, eval.createdAt, eval.editedAt]
+
+        currEvals.push(evalInfo);
+      })
+
+      this.setState({
+        evals: currEvals
+      })
+      this.setError("");
+    }
+  }
+
   handleInputChange = () => {
     this.setState({
       courseCode: this.search.value
@@ -77,6 +109,11 @@ class Home extends Component {
       //     this.getInfo()
       //   }
       // }
+
+      // for each result (course in results)
+      this.state.results.forEach(function(result) {
+        this.getEvals(result.id)
+      })
     })
   }
 
