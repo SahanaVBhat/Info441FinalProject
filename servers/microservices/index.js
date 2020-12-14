@@ -20,28 +20,42 @@ const connect = () => {
 // create & add default courses
 defaultCourses();
 
-app.all('*',function(req,res,next)
-{
-    if (!req.get('Origin')) return next();
+// app.all('*',function(req,res,next)
+// {
+//     if (!req.get('Origin')) return next();
 
-    res.set('Access-Control-Allow-Origin','http://info441-deploy.me');
-    res.set('Access-Control-Allow-Methods','GET,POST,DELETE,PATCH');
-    res.set('Access-Control-Allow-Headers','X-Requested-With,Content-Type');
+//     res.set('Access-Control-Allow-Origin','*');
+//     res.set('Access-Control-Allow-Methods','GET,POST,DELETE,PATCH');
+//     res.set('Access-Control-Allow-Headers','X-Requested-With,Content-Type');
 
-    if ('OPTIONS' == req.method) return res.send(200);
+//     if ('OPTIONS' == req.method) return res.send(200);
 
-    next();
-});
+//     next();
+// });
 
-// get all courses
+// get all courses or courses that match search param
 app.get("/v1/courses", async (req, res) => {
 	// 200: Successful response with all course information
 	// 500: Internal server error 
 
 	try {
-		const courses = await Course.find();
-		res.set('Content-Type', 'application/json');
-        res.status(200).json(courses);
+		// get search query 
+		const query = req.query['code'] ? req.query['code'] : null;
+
+		if (query == null) {
+			// get all courses
+			const courses = await Course.find();
+			res.set('Content-Type', 'application/json');
+			res.status(200).json(courses);
+		} else {
+			// get courses with matching code 
+			const matchingCourses = await Course.find({code: {"$regex": query, "$options": "i"}})
+			
+			// return courses 
+			res.set ("Content-Type", "application/json");
+			res.status(200).json(matchingCourses);
+		}
+		
 	} catch {
 		res.status(500).send("There was an issue getting courses");
 	}
@@ -49,28 +63,13 @@ app.get("/v1/courses", async (req, res) => {
 
 // get specific course based on given course ID 
 app.get("/v1/courses/:courseID", async (req, res) => {
-    // 200: Successful response with course information
-    // 401: Cannot verify Course ID 
+    // 200: Successful response with course information 
 	// 500: Internal server error
 	
     try {
-        // // if getting course ID with body 
-        // const courseID = JSON.stringify(req.body);
-        // if (!courseID) {
-        //     res.status(415).send("Error: unsupported body")
-        // }
-
         // get course with id from req
         const courseID = req.params['courseID'];
         const course = await Course.find({ id: courseID });
-        // Course.findById(courseID, function(err, c) {
-        //     if (err) {
-        //         res.status(401).send("Could not find course with the given ID");
-        //         return;
-        //     }
-        //     course = c;
-        // });
-        //const specificCourse = await Channel.find({id: courseID});
 
         res.set("Content-Type", "application/json");
         res.status(200).json(course);
