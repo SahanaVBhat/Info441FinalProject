@@ -1,19 +1,23 @@
 package handlers
 
 import (
+	"Info441FinalProject/servers/gateway/models/users"
+	"Info441FinalProject/servers/gateway/sessions"
 	"encoding/json"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/models/users"
-	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/sessions"
 )
 
 //handles requests for the "users" resource.
 func (hc *HandlerContext) UsersHandler(w http.ResponseWriter, r *http.Request) {
+	// Response codes:
+	// 201: created new user account
+	// 400: bad request if user account already exists, incorrect body
+	// 405: method is not 'POST'
+	// 415: content-type is not 'application/json'
 
 	if r.Method == "POST" {
 		ctype := r.Header.Get("Content-Type")
@@ -62,6 +66,14 @@ func (hc *HandlerContext) UsersHandler(w http.ResponseWriter, r *http.Request) {
 
 //handles requests for a specific user based on user Id
 func (hc *HandlerContext) SpecificUserHandler(w http.ResponseWriter, r *http.Request) {
+	// Response codes:
+	// 200: Successful response with user information
+	// 201: Updated user information
+	// 400: Bad request if user account already exists
+	// 401: Cannot verify User ID, unathorized user information access
+	// 404: User not found
+	// 415: Cannot decode body or receive unsupported body.
+
 	//get authenticated user
 	sessState := &SessionState{}
 	_, err := sessions.GetState(r, hc.SigningKey, hc.SessionStore, sessState)
@@ -148,6 +160,13 @@ func (hc *HandlerContext) SpecificUserHandler(w http.ResponseWriter, r *http.Req
 //handles requests for the "sessions" resource,
 //and allows clients to begin a new session using an existing user's credentials.
 func (hc *HandlerContext) SessionsHandler(w http.ResponseWriter, r *http.Request) {
+	// Response codes:
+	// 201: created a new session for a user on sign in
+	// 400: bad request if body is not correct
+	// 401: user does not exist or cannot be authenticated
+	// 405: method not allowed
+	// 415: unsupported media
+
 	if r.Method == "POST" {
 		ctype := r.Header.Get("Content-Type")
 		if !strings.HasPrefix(ctype, "application/json") {
@@ -206,6 +225,11 @@ func (hc *HandlerContext) SessionsHandler(w http.ResponseWriter, r *http.Request
 
 //handles requests related to a specific authenticated session
 func (hc *HandlerContext) SpecificSessionHandler(w http.ResponseWriter, r *http.Request) {
+	// Response codes:
+	// 400: bad request
+	// 403: forbidden request if not user's session
+	// 405: method is not 'DELETE'
+
 	if r.Method == "DELETE" {
 		if !strings.HasSuffix(r.URL.Path, "mine") {
 			http.Error(w, "Request path doesnt end with mine", http.StatusForbidden)
