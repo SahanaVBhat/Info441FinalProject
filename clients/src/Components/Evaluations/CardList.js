@@ -23,7 +23,7 @@ class CardList extends Component {
   }
 
   nextPath(path) {
-    this.props.history.push(path);
+    this.props.history.push(path); 
   }
 
   render() {
@@ -42,13 +42,15 @@ class CardList extends Component {
                   state: {
                     courseID: this.props.classInfo[0]
                   }}}>Add Evaluation</Link>
-
+  
             </a>
             <a href="#" class="btn btn-primary" onClick={this.handleEvalClick}>Read Evaluations</a>
           </div>
           <div class="eval-body" id="hi">
             {this.state.show && this.state.evals.map((data, index) => {
-              return (<Card classInfo={data} value={index}/>);
+              return (
+                <Card classInfo={data} value={index}/>
+              );
             })}
           </div>
         </div>
@@ -100,8 +102,6 @@ class CardList extends Component {
 
         return oneEval;
       });
-
-      console.log(evalsMap)
 
       // add evaluations to page 
       if (evalsMap.length >= 1) {
