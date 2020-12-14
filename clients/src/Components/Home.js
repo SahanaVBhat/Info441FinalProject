@@ -112,7 +112,6 @@ class Home extends Component {
 
       // for each result (course in results)
       this.state.results.forEach(function(result) {
-        console.log("HELLO FROM INSIDE FOR EACH")
         this.getEvals(result.id)
       })
     })
