@@ -3,7 +3,7 @@ import "../Styles/App.css";
 import api from './../Constants/APIEndpoints/APIEndpoints';
 import Errors from './Errors/Errors';
 import Footer from "./Footer";
-import CardList from "./CardList";
+import Card from "./Card";
 
 class Home extends Component {
   // submitForm = async (e) => {
@@ -30,7 +30,6 @@ class Home extends Component {
     this.state = {
       courseCode: "",
       results: [],
-      evals: [],
       error: ""
     };
   }
@@ -56,6 +55,7 @@ class Home extends Component {
       return;
     }
     const courses = await response.json();
+    let newResults = courses
     if (courses.length > 1) {  
       this.setState({
         results: [courses[0].id, courses[0].code, courses[0].title, courses[0].description]
@@ -68,36 +68,7 @@ class Home extends Component {
     }
   }
 
-  getEvals = async (courseID) => {
-    const response = await fetch(api.base + api.handlers.courses + "/" + courseID + "/evaluations", {method: "GET"});
-    if (response.status >= 300) {
-      const error = await response.text();
-      this.setError(error);
-      return;
-    }
-
-    const evals = await response.json();
-    
-    // check if there is more than one evaluation for course 
-    if (evals.length > 0) {
-      // get current evals saved in state
-      let currEvals = this.state.evals;
-
-      // for each evaluation:
-      // -- create array containg all eval information to display
-      // -- add eval to currEvals (for state)
-      evals.forEach(function(eval) {
-        let evalInfo = [eval.id, eval.studentID, eval.courseID, eval.instructors, eval.year, eval.quarter, eval.creditType, eval.credits, eval.workload, eval.gradingTechniques, eval.description, eval.likedUsers, eval.dislikedUsers, eval.createdAt, eval.editedAt]
-
-        currEvals.push(evalInfo);
-      })
-
-      this.setState({
-        evals: currEvals
-      })
-      this.setError("");
-    }
-  }
+  
 
   handleInputChange = () => {
     this.setState({
@@ -110,10 +81,10 @@ class Home extends Component {
       //   }
       // }
 
-      // for each result (course in results)
-      this.state.results.forEach(function(result) {
-        this.getEvals(result.id)
-      })
+      // // for each result (course in results)
+      // this.state.results.forEach(function(result) {
+      //   this.getEvals(result.id)
+      // })
     })
   }
 
@@ -145,7 +116,13 @@ class Home extends Component {
             <main>
               <div>
                 <section>
-                  <CardList classInfo={this.state.results}/>
+                {this.state.results.map(data => {
+                      return (
+                          <Card classInfo={this.state.results}/>
+                        
+                      );
+                    })}
+                  
                 </section>
               </div>
             </main>

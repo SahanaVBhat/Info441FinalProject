@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import "../Styles/App.css";
 
 class Card extends Component {
+
   render() {
-    let topic = this.props.category;
+    //let topic = this.props.category;
     return (
       <div className="card">
         <div className="card-body">
@@ -16,7 +17,7 @@ class Card extends Component {
 }
 class CardList extends Component {
   render() {
-    return <Card course={this.props.classInfo[1]} name={this.props.classInfo[2]} d={this.props.classInfo[3]}/>;
+    return <Card id={this.props.classInfo[0]} course={this.props.classInfo[1]} name={this.props.classInfo[2]} d={this.props.classInfo[3]}/>;
   }
 }
 export default CardList;
