@@ -28,11 +28,11 @@ const MainPageContent = ({ user, setPage }) => {
     }, []);
 
     return <>
-        <div>Welcome to your application, {user.firstName} {user.lastName}</div>
+        <div>You may now add an evaluation, {user.firstName} {user.lastName}</div>
 
         {avatar && <img className={"avatar"} src={avatar} alt={`${user.firstName}'s avatar`} />}
-        <div ><button onClick={(e) => { setPage(e, PageTypes.signedInUpdateName) }}>Update name</button></div>
-        <div><button onClick={(e) => { setPage(e, PageTypes.signedInUpdateAvatar) }}>Update avatar</button></div>
+        <div ><button onClick={(e) => { setPage(e, PageTypes.signedInUpdateName) }}>Add Evaluation</button></div>
+        <div><button onClick={(e) => { setPage(e, PageTypes.signedInUpdateAvatar) }}>Update name</button></div>
     </>
 }
 

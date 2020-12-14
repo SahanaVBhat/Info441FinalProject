@@ -6,18 +6,30 @@ class UpdateName extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            firstName: '',
-            lastName: '',
+            studentID: '',
+            courseCode: '',
+            instructors: '',
+            year: '',
+            quarter: '',
+            creditType: '',
+            credits: '',
+            workload: '',
+            gradingTechniques: '',
+            description: '',
+            likedUsers: [],
+            dislikedUsers: [],
+            createdAt: '',
+            editedAt:'',
             error: ''
         }
     }
 
     sendRequest = async (e) => {
         e.preventDefault();
-        const { firstName, lastName } = this.state;
-        const sendData = { firstName, lastName };
-        const response = await fetch(api.base + api.handlers.myuser, {
-            method: "PATCH",
+        const { courseCode, instructors, year, quarter, creditType, credits, workload, gradingTechniques, description } = this.state;
+        const sendData = { courseCode, instructors, year, quarter, creditType, credits, workload, gradingTechniques, description };
+        const response = await fetch(api.base + api.handlers.evaluations, {
+            method: "POST",
             body: JSON.stringify(sendData),
             headers: new Headers({
                 "Authorization": localStorage.getItem("Authorization"),
@@ -30,7 +42,7 @@ class UpdateName extends Component {
             this.setError(error);
             return;
         }
-        alert("Name changed") // TODO make this better by refactoring errors
+        alert("Evaluation added") // TODO make this better by refactoring errors
         const user = await response.json();
         this.props.setUser(user);
     }
@@ -44,20 +56,49 @@ class UpdateName extends Component {
     }
 
     render() {
-        const { firstName, lastName, error } = this.state;
+        const { courseCode, instructors, year, quarter, creditType, credits, workload, gradingTechniques, description, error } = this.state;
         return <>
             <Errors error={error} setError={this.setError} />
-            <div>Enter a new name</div>
+            <div>Enter a new Evaluation</div>
             <form onSubmit={this.sendRequest}>
                 <div>
-                    <span>First name: </span>
-                    <input name={"firstName"} value={firstName} onChange={this.setValue} />
+                    <span>courseCode: </span>
+                    <input name={"courseCode"} value={courseCode} onChange={this.setValue} />
                 </div>
                 <div>
-                    <span>Last name: </span>
-                    <input name={"lastName"} value={lastName} onChange={this.setValue} />
+                    <span>instructors: </span>
+                    <input name={"instructors"} value={instructors} onChange={this.setValue} />
                 </div>
-                <input type="submit" value="Change name" />
+                <div>
+                    <span>year: </span>
+                    <input name={"year"} value={year} onChange={this.setValue} />
+                </div>
+                <div>
+                    <span>quarter: </span>
+                    <input name={"quarter"} value={quarter} onChange={this.setValue} />
+                </div>
+                <div>
+                    <span>creditType: </span>
+                    <input name={"creditType"} value={creditType} onChange={this.setValue} />
+                </div>
+                <div>
+                    <span>credits: </span>
+                    <input name={"credits"} value={credits} onChange={this.setValue} />
+                </div>
+                <div>
+                    <span>workload: </span>
+                    <input name={"workload"} value={workload} onChange={this.setValue} />
+                </div>
+                <div>
+                    <span>grading fairness: </span>
+                    <input name={"gradingTechniques"} value={gradingTechniques} onChange={this.setValue} />
+                </div>
+                <div>
+                    <span>description: </span>
+                    <input name={"description"} value={description} onChange={this.setValue} />
+                </div>
+
+                <input type="submit" value="Add Evaluation" />
             </form>
         </>
     }

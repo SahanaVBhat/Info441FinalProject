@@ -3,7 +3,7 @@ import "../Styles/App.css";
 import api from './../Constants/APIEndpoints/APIEndpoints';
 import Errors from './Errors/Errors';
 import Footer from "./Footer";
-import CardList from "./CardList";
+import CardList from "./Evaluations/CardList";
 
 class Home extends Component {
   // submitForm = async (e) => {
@@ -103,12 +103,6 @@ class Home extends Component {
               <div>
                 <section>
                   <CardList classInfo={this.state.results} />
-                  
-                  {/* {this.state.results.map(data => {
-                      return (
-                          <CardList classInfo={this.state.results}/>
-                      );
-                  })} */}
                 </section>
               </div>
             </main>

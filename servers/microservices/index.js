@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const { course, evaluation } = require('./schemas');
-
+const moment= require('moment');
 const mongoEndpoint = "mongodb://customMongoContainer:27017/rabbit";
 const port = 80;
 
@@ -105,27 +105,35 @@ app.post("/v1/evaluations/", async (req, res) => {
 
     const { courseCode, instructors, year, quarter, creditType, credits, workload, gradingTechniques, description } = req.body;
 	const course = await Course.find({ code: courseCode });
-
+	console.log(course);
+	const instructorArr = instructors.split(',');
+	const instructorMap = instructorArr.map((instructor) =>{
+		let instr = {}
+		instr.name = instructor
+		return instr;
+	})
 	//to get studentID
 	var usr = JSON.parse(XUser);
 	//get number of documents in evaluation
 	const Lastid = await Evaluation.countDocuments({});
 	const id = Lastid+1;
+	console.log(course[0].id);
     const createdAt = new Date();
 	const evaluation = { 
 		id: id,
 		studentID: usr.id,
-        courseID: course.id,
-        instructors: instructors,
-        year: year,
+        courseID: course[0].id,
+        instructors: instructorMap,
+        year: moment(year, "YYYY"),
         quarter: quarter,
         creditType: creditType,
-        credits: credits,
-        workload: workload,
-        gradingTechniques: gradingTechniques,
+        credits: parseInt(credits),
+        workload: parseInt(workload),
+        gradingTechniques: parseInt(gradingTechniques),
 		description: description,
         createdAt: createdAt
 	};
+	console.log("inserting..."+ evaluation);
 
 	const query = new Evaluation(evaluation);
 	query.save((err, newEvaluation) => {

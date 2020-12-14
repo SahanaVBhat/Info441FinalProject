@@ -10,6 +10,6 @@ export default {
         resetPasscode: "/v1/resetcodes",
         passwords: "/v1/passwords/",
         courses: "/v1/courses",
-        evaluations: "/v1/evaluations"
+        evaluations: "/v1/evaluations/"
     }
 }
