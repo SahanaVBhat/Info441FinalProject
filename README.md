@@ -30,7 +30,7 @@ https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
 
 ## API EndPoints
 ### User 
-`v1/user`: saves users who make accounts \
+`v1/user`: saves users who make accounts 
 * `GET` (`application/json`) : to get a specific user account based on User ID. 
  * 200: Successful response with user information 
  * 401: Cannot verify User ID .
@@ -50,7 +50,7 @@ https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
  * 500: internal server error
 
 ### Session
-`/v1/sessions`: saves user session when logged in \
+`/v1/sessions`: saves user session when logged in 
 * `POST` (`application/json`) : Post new user session
  * 201: created a new session for a user on sign in
  * 415: unsupported media
@@ -65,12 +65,12 @@ https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
  * 403: forbidden request if not user's session
 
 ### Course 
-`v1/courses` :  information on all the courses \
+`v1/courses` :  information on all the courses 
 * `GET` (`application/json`) : to get all courses in the database
  * 200: Successful response with course information 
  * 500: Internal server error
 
-`v1/courses/{courseID}` :  to retrieve information on specific courses \
+`v1/courses/{courseID}` :  to retrieve information on specific courses 
 * `GET` (`application/json`) : to get information on the specific courses in the databse
  * 200: Successful response with course information 
  * 500: Internal server error
@@ -81,13 +81,13 @@ https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
  * 500: Internal server error
 
 ### Evaluation
-`v1/evaluations`: information on all the evaluations submitted \
+`v1/evaluations`: information on all the evaluations submitted 
 * `POST` (`application/json`): to add evaluation to a course
  * 201: Created new evaluation  
  * 401: Unauthorized user information access
  * 500: Internal server error
  
-`v1/evaluations/{id}`: information on the specific evaluation submitted \
+`v1/evaluations/{id}`: information on the specific evaluation submitted 
 * `PATCH` (`application/json`) : to update evaluation text description, rating etc
  * 201: Updated evaluation parameters
  * 401: Unauthorized user information access
@@ -104,61 +104,61 @@ We use MongoDB as our data storage for courses and evaluations, Redis as the sto
  * **Evaluation**: The courses are evaluated and reviewed by students. The evaluations are specific to a course. A single course can have multiple evaluations based on the quarter, year and instructors involved. One user can submit only one evaluation per course. User will be able to edit and delete evaluations.
 
 ```
-	evaluation: { \
-		id: int \
-		studentID: int \
-		courseID: int \
+	evaluation: { 
+		id: int 
+		studentID: int 
+		courseID: int 
 		instructurs: [string] (multiple instructors can be included separated by ‘ , ’ or ‘ ; ‘) \
-		year: date \
-		quarter : string \
-		creditType: string \
-		credits: int \
-		workload: int  (on a scale of 1-10, with 1 being the least amount of work and 10 being the most work) \
-		gradingTechniques: int (on a scale of 1-5, with 1 being the easiest grading technique and 5 being the most difficult grading technique) \
-		description: string	\
-		likedUsers: [int] ( list of unique studentIDs who have liked the evaluation. The length of the array provides count of likes. Need to check if the studentID exists before adding to the list, to maintain unique studentIDs) \
-		dislikedUsers: [int] ( list of studentIDs who disliked the course) \
+		year: date 
+		quarter : string 
+		creditType: string 
+		credits: int 
+		workload: int  (on a scale of 1-10, with 1 being the least amount of work and 10 being the most work) 
+		gradingTechniques: int (on a scale of 1-5, with 1 being the easiest grading technique and 5 being the most difficult grading technique) 
+		description: string	
+		likedUsers: [int] ( list of unique studentIDs who have liked the evaluation. The length of the array provides count of likes. Need to check if the studentID exists before adding to the list, to maintain unique studentIDs) 
+		dislikedUsers: [int] ( list of studentIDs who disliked the course) 
 	}
 ```
  * **Course**: The evaluations are specific to a course. This data model contains course information such as Course Title, Course Code, Credits and a brief Description text.
 ```
-	course: { \
-		id: int \
-		code: string \
-		title: string \
-		description: string \
-		credits: int \
+	course: { 
+		id: int 
+		code: string 
+		title: string 
+		description: string 
+		credits: int 
 	}
 ```
 
  * **Student**: represents student information
 ```
-	student: { \
-		id :  int64 \
-		email:  string \
-		passhash: []byte \
-		userName: string \
-		firstName: string \
-		lastName:  string \
-		avatarPhotoURL:  string \
+	student: { 
+		id :  int64 
+		email:  string 
+		passhash: []byte 
+		userName: string 
+		firstName: string 
+		lastName:  string 
+		avatarPhotoURL:  string 
 	}
 ```
  * **NewStudent**: represents new student information, used during user registration
 ```
-	newStudent: { \
-		email: string \
-		password: string \
-		passwordConf: string \
-		userName: string \
-		firstName: string \
-		lastName: string \
+	newStudent: { 
+		email: string 
+		password: string 
+		passwordConf: string 
+		userName: string 
+		firstName: string 
+		lastName: string 
 	}
 ```
- * **Student Credentials**: used during user login \
+ * **Student Credentials**: used during user login 
 ```
-	credentials: { \
-		email: string \
-		password: string \
+	credentials: { 
+		email: string 
+		password: string 
 	}
 ```
 
