@@ -86,7 +86,7 @@ class Home extends Component {
       // for each evaluation:
       // -- create array containg all eval information to display
       // -- add eval to currEvals (for state)
-      evals.forEach(function(eval) {
+      evals.forEach(function() {
         let evalInfo = [eval.id, eval.studentID, eval.courseID, eval.instructors, eval.year, eval.quarter, eval.creditType, eval.credits, eval.workload, eval.gradingTechniques, eval.description, eval.likedUsers, eval.dislikedUsers, eval.createdAt, eval.editedAt]
 
         currEvals.push(evalInfo);

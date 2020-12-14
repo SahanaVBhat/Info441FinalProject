@@ -3,14 +3,17 @@ import "../Styles/App.css";
 
 class Card extends Component {
   render() {
-    let topic = this.props.category;
     return (
-      <div className="card">
-        <div className="card-body">
-          <h3 className="card-title">{this.props.course} {this.props.name}</h3>
-          <h4>{this.props.d}</h4>
+        <div class="card text-center">
+          <div class="card-header">
+            {this.props.course} 
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{this.props.name}</h5>
+            <p class="card-text">{this.props.d}</p>
+            <a href="#" class="btn btn-primary">Add Evaluation</a>
+          </div>
         </div>
-      </div>
     );
   }
 }
