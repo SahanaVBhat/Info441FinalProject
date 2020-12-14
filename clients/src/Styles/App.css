@@ -26,3 +26,9 @@ header {
   outline: 1px solid black;
   display: inline-flex;
 }
+
+.btn-primary {
+  background-color:#6f42c1;
+  border: none;
+  margin: 5px;
+}

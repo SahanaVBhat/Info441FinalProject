@@ -29,9 +29,7 @@ class Home extends Component {
 
     this.state = {
       courseCode: "",
-      //courseID: 0,
       results: [],
-      evals: [],
       error: ""
     };
   }
@@ -47,7 +45,6 @@ class Home extends Component {
   // GET /v1/courses?code=
   getInfo = async () => {
     const courseCode = this.state.courseCode;
-    //const sendData = { courseCode };
     const response = await fetch(api.base + api.handlers.courses + '?code=' + courseCode, {
       method: "GET",
     });
@@ -58,9 +55,14 @@ class Home extends Component {
     }
     const courses = await response.json();
     if (courses.length >= 1) {  
+      // var currCourses = this.state.results;
+      // courses.forEach(function(c) {
+      //   var cToAdd = [c.id, c.code, c.title, c.description];
+      //   currCourses.push(cToAdd);
+      // })
       this.setState({
         results: [courses[0].id, courses[0].code, courses[0].title, courses[0].description], 
-        //courseID: courses[0].id
+        //currCourses: currCourses
       })
       this.setError("");
     } else {
@@ -70,45 +72,13 @@ class Home extends Component {
     }
   }
 
-  getEvals = async (courseID) => {
-    const response = await fetch(api.base + api.handlers.courses + "/" + courseID + "/evaluations", {method: "GET"});
-    if (response.status >= 300) {
-      const error = await response.text();
-      this.setError(error);
-      return;
-    }
-
-    const evals = await response.json();
-    
-    // check if there is more than one evaluation for course 
-    if (evals.length > 0) {
-      // get current evals saved in state
-      let currEvals = this.state.evals;
-
-      // for each evaluation:
-      // -- create array containg all eval information to display
-      // -- add eval to currEvals (for state)
-      evals.forEach(function(e) {
-        let evalInfo = [e.id, e.studentID, e.courseID, e.instructors[0]['name'], e.year, e.quarter, e.creditType, e.credits, e.workload, e.gradingTechniques, e.description, e.likedUsers.length, e.dislikedUsers.length, e.createdAt, e.editedAt]
-
-        currEvals.push(evalInfo);
-      })
-
-      this.setState({
-        evals: currEvals
-      })
-      this.setError("");
-    }
-  }
-
   handleInputChange = () => {
     this.setState({
-      courseCode: this.search.value,
-      evals: []
+      courseCode: this.search.value
     }, () => {
       this.getInfo()
       
-      this.getEvals(this.state.results[0])
+      //this.getEvals(this.state.results[0])
     })
   }
 
@@ -140,8 +110,13 @@ class Home extends Component {
             <main>
               <div>
                 <section>
-                  <CardList classInfo={this.state.results}/>
-                  <p>{this.state.evals}</p>
+                  <CardList classInfo={this.state.results} />
+                  
+                  {/* {this.state.results.map(data => {
+                      return (
+                          <CardList classInfo={this.state.results}/>
+                      );
+                  })} */}
                 </section>
               </div>
             </main>
