@@ -1,9 +1,8 @@
 # Project Proposal
 
 ## Project Description 
-<p> 
-Currently there is no resource for UW students to see specific reviews and suggestions about a particular course. Similar services, such as RateMyProfessor focuses on the professors themselves, while UW course evaluation only displays numerical ratings without much explanation for the course structure, details, or helpful suggestions. As UW students and developers, we want to solve this issue by building an application **UW Course Eval** to help UW students make more informed decisions about the classes they want to take: by creating an application where they are able to see reviews for a particular course and view the difficulty of the course, see the recommendations from other students, and able to submit reviews/evaluations of a course anonymously.
-</p>
+
+Currently there is no resource for UW students to see specific reviews and suggestions about a particular course. Similar services, such as RateMyProfessor focuses on the professors themselves, while UW course evaluation only displays numerical ratings without much explanation for the course structure, details, or helpful suggestions. As UW students and developers, we want to solve this issue by building an application **RateTheCourse** to help UW students make more informed decisions about the classes they want to take: by creating an application where they are able to see reviews for a particular course and view the difficulty of the course, see the recommendations from other students, and able to submit reviews/evaluations of a course anonymously.
 
 ## Technical Description
 ### Architectural diagram mapping 
