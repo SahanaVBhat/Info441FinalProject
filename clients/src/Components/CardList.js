@@ -13,23 +13,43 @@ class CardList extends Component {
         this.state = {
           evals: []
         };
-      }
+    }
 
     render() {
-        
-        return (
-            <div class="card text-center">
-                <div class="card-header">
-                    {this.props.classInfo[1]} 
+        if (this.props.classInfo.length != 0) {
+            // if (this.state.evals[0] != null) {
+            //     console.log(this.state.evals[0][3])
+            //     var instructor = document.createElement("P");
+            //     var instrText = document.createTextNode("Instructor(s): " + this.state.evals[0][3]);
+            //     instructor.appendChild(instrText);
+
+            //     var descr = document.createElement("P");
+            //     var descrText = document.createTextNode("Description: " + this.state.evals[0][10]);
+            //     descr.appendChild(descrText);
+
+            //     document.getElementById("hi").appendChild(document.createElement("HR"));
+            //     document.getElementById("hi").appendChild(instructor);
+            //     document.getElementById("hi").appendChild(descr);
+            // }
+            return (
+                <div class="card text-center">
+                    <div class="card-header">
+                        {this.props.classInfo[1]} 
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{this.props.classInfo[2]}</h5>
+                        <p class="card-text">{this.props.classInfo[3]}</p>
+                        <a href="#" class="btn btn-primary">Add Evaluation</a>
+                        <a href="#" class="btn btn-primary" onClick={this.handleEvalClick}>Read Evaluations</a>
+                    </div>
+                    <div class="eval-body" id="hi"></div>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">{this.props.classInfo[2]}</h5>
-                    <p class="card-text">{this.props.classInfo[3]}</p>
-                    <a href="#" class="btn btn-primary">Add Evaluation</a>
-                    <a href="#" class="btn btn-primary" onClick={this.handleEvalClick}>Read Evaluations</a>
-                </div>
-            </div>
-        );
+            );
+        } else {
+            return (
+                <div></div>
+            );
+        }
     }
 
     handleEvalClick = () => {
@@ -69,9 +89,34 @@ class CardList extends Component {
                 evals: currEvals
             })
             this.setError("");
-        }
 
-        console.log(this.state.evals)
+            // add evaluations to page 
+            if (this.state.evals[0] != null) {
+                // instructor 
+                var instructor = document.createElement("P");
+                var instrText = document.createTextNode("Instructor(s): " + this.state.evals[0][3]);
+                instructor.appendChild(instrText);
+
+                // description
+                var descr = document.createElement("P");
+                var descrText = document.createTextNode("Description: " + this.state.evals[0][10]);
+                descr.appendChild(descrText);
+
+                // created at 
+                var created = document.createElement("P");
+                var createdText = document.createTextNode("Created At: " + this.state.evals[0][13]);
+                created.appendChild(createdText);
+
+                document.getElementById("hi").appendChild(document.createElement("HR"));
+                document.getElementById("hi").appendChild(instructor);
+                document.getElementById("hi").appendChild(descr);
+                document.getElementById("hi").appendChild(created);
+            }
+        } else {
+            this.setState({
+                evals: ["no evaluations for this course"]
+            })
+        }
     }
 }
 // class CardList extends Component {
