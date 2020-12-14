@@ -67,7 +67,7 @@ class Home extends Component {
     }
   }
 
-  getEvals = async () => {
+  getEvals = async (courseID) => {
     const response = await fetch(api.base + api.handlers.courses + "/" + courseID + "/evaluations", {method: "GET"});
     if (response.status >= 300) {
       const error = await response.text();
