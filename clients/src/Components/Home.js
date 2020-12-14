@@ -107,11 +107,7 @@ class Home extends Component {
       evals: []
     }, () => {
       this.getInfo()
-      // if (this.state.courseCode && this.state.courseCode.length > 1) {
-      //   if (this.state.courseCode.length % 2 === 0) {
-      //     this.getInfo()
-      //   }
-      // }
+      
       this.getEvals(this.state.results[0])
     })
   }
