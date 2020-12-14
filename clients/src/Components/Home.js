@@ -96,7 +96,6 @@ class Home extends Component {
       })
       this.setError("");
     }
-
   }
 
   handleInputChange = () => {
