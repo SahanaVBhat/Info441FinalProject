@@ -29,6 +29,7 @@ class Home extends Component {
 
     this.state = {
       courseCode: "",
+      //courseID: 0,
       results: [],
       evals: [],
       error: ""
@@ -56,9 +57,10 @@ class Home extends Component {
       return;
     }
     const courses = await response.json();
-    if (courses.length > 1) {  
+    if (courses.length >= 1) {  
       this.setState({
-        results: [courses[0].id, courses[0].code, courses[0].title, courses[0].description]
+        results: [courses[0].id, courses[0].code, courses[0].title, courses[0].description], 
+        //courseID: courses[0].id
       })
       this.setError("");
     } else {
@@ -86,8 +88,8 @@ class Home extends Component {
       // for each evaluation:
       // -- create array containg all eval information to display
       // -- add eval to currEvals (for state)
-      evals.forEach(function(eval) {
-        let evalInfo = [eval.id, eval.studentID, eval.courseID, eval.instructors, eval.year, eval.quarter, eval.creditType, eval.credits, eval.workload, eval.gradingTechniques, eval.description, eval.likedUsers, eval.dislikedUsers, eval.createdAt, eval.editedAt]
+      evals.forEach(function(e) {
+        let evalInfo = [e.id, e.studentID, e.courseID, e.instructors[0]['name'], e.year, e.quarter, e.creditType, e.credits, e.workload, e.gradingTechniques, e.description, e.likedUsers.length, e.dislikedUsers.length, e.createdAt, e.editedAt]
 
         currEvals.push(evalInfo);
       })
@@ -101,7 +103,8 @@ class Home extends Component {
 
   handleInputChange = () => {
     this.setState({
-      courseCode: this.search.value
+      courseCode: this.search.value,
+      evals: []
     }, () => {
       this.getInfo()
       // if (this.state.courseCode && this.state.courseCode.length > 1) {
@@ -109,11 +112,7 @@ class Home extends Component {
       //     this.getInfo()
       //   }
       // }
-
-      // for each result (course in results)
-      this.state.results.forEach(function(result) {
-        this.getEvals(result.id)
-      })
+      this.getEvals(this.state.results[0])
     })
   }
 
@@ -146,6 +145,7 @@ class Home extends Component {
               <div>
                 <section>
                   <CardList classInfo={this.state.results}/>
+                  <p>{this.state.evals}</p>
                 </section>
               </div>
             </main>
