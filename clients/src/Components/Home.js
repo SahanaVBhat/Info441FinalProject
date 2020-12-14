@@ -55,14 +55,8 @@ class Home extends Component {
     }
     const courses = await response.json();
     if (courses.length >= 1) {  
-      // var currCourses = this.state.results;
-      // courses.forEach(function(c) {
-      //   var cToAdd = [c.id, c.code, c.title, c.description];
-      //   currCourses.push(cToAdd);
-      // })
       this.setState({
-        results: [courses[0].id, courses[0].code, courses[0].title, courses[0].description], 
-        //currCourses: currCourses
+        results: [courses[0].id, courses[0].code, courses[0].title, courses[0].description]
       })
       this.setError("");
     } else {
@@ -77,8 +71,6 @@ class Home extends Component {
       courseCode: this.search.value
     }, () => {
       this.getInfo()
-      
-      //this.getEvals(this.state.results[0])
     })
   }
 
