@@ -1,6 +1,9 @@
 package main
 
 import (
+	"Info441FinalProject/servers/gateway/handlers"
+	"Info441FinalProject/servers/gateway/models/users"
+	"Info441FinalProject/servers/gateway/sessions"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -12,10 +15,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/handlers"
-	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/models/users"
-	"github.com/SahanaVBhat/Info441FinalProject/servers/gateway/sessions"
 
 	"github.com/go-redis/redis"
 )
