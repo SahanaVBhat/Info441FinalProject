@@ -32,71 +32,71 @@ https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
 ### User 
 `v1/user`: saves users who make accounts 
 * `GET` (`application/json`) : to get a specific user account based on User ID. 
- * 200: Successful response with user information 
- * 401: Cannot verify User ID .
- * 415: Cannot decode body or receive unsupported body.
- * 500: Internal server error.
+	* 200: Successful response with user information 
+	* 401: Cannot verify User ID .
+	* 415: Cannot decode body or receive unsupported body.
+	* 500: Internal server error.
 
 * `POST` (`application/json`) : to create new user account, Sign up
- * 201: created new user account
- * 400: bad request if user account already exists
- * 401: unauthorized user information access
- * 500: internal server error
+	* 201: created new user account
+	* 400: bad request if user account already exists
+	* 401: unauthorized user information access
+	* 500: internal server error
  
 * `PATCH` (`application/json`) : to update user email Id or password
- * 201: updated user information
- * 400: bad request if user account already exists
- * 401: unauthorized user information access
- * 500: internal server error
+	* 201: updated user information
+	* 400: bad request if user account already exists
+	* 401: unauthorized user information access
+	* 500: internal server error
 
 ### Session
 `/v1/sessions`: saves user session when logged in 
 * `POST` (`application/json`) : Post new user session
- * 201: created a new session for a user on sign in
- * 415: unsupported media
- * 500: internal server error
+	* 201: created a new session for a user on sign in
+	* 415: unsupported media
+	* 500: internal server error
 
 * `GET` (`application/json`) : Get current user session
- * 400: bad request
- * 403: forbidden request if not user's session
+	* 400: bad request
+	* 403: forbidden request if not user's session
 
 * `DELETE`: Delete user session after user logs out
- * 400: bad request
- * 403: forbidden request if not user's session
+	* 400: bad request
+	* 403: forbidden request if not user's session
 
 ### Course 
 `v1/courses` :  information on all the courses 
 * `GET` (`application/json`) : to get all courses in the database
- * 200: Successful response with course information 
- * 500: Internal server error
+	* 200: Successful response with course information 
+	* 500: Internal server error
 
 `v1/courses/{courseID}` :  to retrieve information on specific courses 
 * `GET` (`application/json`) : to get information on the specific courses in the databse
- * 200: Successful response with course information 
- * 500: Internal server error
+	* 200: Successful response with course information 
+	* 500: Internal server error
 
 `v1/courses/{courseID}/evaluations` :  to retrieve all evaluations on specific courses \
 * `GET` (`application/json`) : to get information on the specific courses in the databse
- * 200: Successful response with course information 
- * 500: Internal server error
+	* 200: Successful response with course information 
+	* 500: Internal server error
 
 ### Evaluation
 `v1/evaluations`: information on all the evaluations submitted 
 * `POST` (`application/json`): to add evaluation to a course
- * 201: Created new evaluation  
- * 401: Unauthorized user information access
- * 500: Internal server error
- 
+	* 201: Created new evaluation  
+	* 401: Unauthorized user information access
+	* 500: Internal server error
+
 `v1/evaluations/{id}`: information on the specific evaluation submitted 
 * `PATCH` (`application/json`) : to update evaluation text description, rating etc
- * 201: Updated evaluation parameters
- * 401: Unauthorized user information access
- * 500: Internal server error
+	* 201: Updated evaluation parameters
+	* 401: Unauthorized user information access
+	* 500: Internal server error
 
 * `DELETE`: students who posted the evaluations will be able to delete their evaluations 
- * 200: Successfully deletes student evaluations.
- * 401: Cannot verify review ID
- * 500: Internal server error
+	* 200: Successfully deletes student evaluations.
+	* 401: Cannot verify review ID
+	* 500: Internal server error
 
 ## Data Models
 We use MongoDB as our data storage for courses and evaluations, Redis as the storage for sessions, and MYSQL for the user data.
