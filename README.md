@@ -64,7 +64,8 @@ https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
 	* 403: forbidden request if not user's session
 
 ### Course 
-`v1/courses` :  information on all the courses 
+`v1/courses` :  information on all the courses
+`v1/courses?code=` : information on courses that match code (from user input) 
 * `GET` (`application/json`) : to get all courses in the database
 	* 200: Successful response with course information 
 	* 500: Internal server error
