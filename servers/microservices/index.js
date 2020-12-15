@@ -104,8 +104,12 @@ app.post("/v1/evaluations/", async (req, res) => {
 	}
 
     const { courseCode, instructors, year, quarter, creditType, credits, workload, gradingTechniques, description } = req.body;
-	const course = await Course.find({ code: courseCode });
-	console.log(course);
+	var trimmedCourseCode = courseCode.replace(/\s/g,'');
+	const course = await Course.find({ code: trimmedCourseCode });
+	if (course.length == 0) {
+		res.status(500).send("No course named " + trimmedCourseCode + " found");
+		return;
+	}
 	const instructorArr = instructors.split(',');
 	const instructorMap = instructorArr.map((instructor) =>{
 		let instr = {}
@@ -117,7 +121,6 @@ app.post("/v1/evaluations/", async (req, res) => {
 	//get number of documents in evaluation
 	const Lastid = await Evaluation.countDocuments({});
 	const id = Lastid+1;
-	console.log(course[0].id);
     const createdAt = new Date();
 	const evaluation = { 
 		id: id,
@@ -133,7 +136,6 @@ app.post("/v1/evaluations/", async (req, res) => {
 		description: description,
         createdAt: createdAt
 	};
-	console.log("inserting..."+ evaluation);
 
 	const query = new Evaluation(evaluation);
 	query.save((err, newEvaluation) => {
