@@ -124,4 +124,5 @@ class CardList extends Component {
 //     return <Card id={this.props.classInfo[0]} course={this.props.classInfo[1]} name={this.props.classInfo[2]} d={this.props.classInfo[3]}/>;
 //   }
 // }
+
 export default CardList;

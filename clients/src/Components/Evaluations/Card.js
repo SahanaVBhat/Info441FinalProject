@@ -1,7 +1,7 @@
 import React from "react";
 import api from '../../Constants/APIEndpoints/APIEndpoints';
+import {getEvals} from './CardList.js'
 import { withRouter } from "react-router";
-import { Link } from 'react-router-dom'
 
 
 class Card extends React.Component {
@@ -78,6 +78,7 @@ class Card extends React.Component {
     })
   }
 
+  // updates specific evaluation
   patchEval = async() => {
     console.log("in patch eval")
     if (!this.state.authToken) {
@@ -104,11 +105,11 @@ class Card extends React.Component {
       const error = await response.text();
       this.setError(error);
       alert(error)
+      return;
     }
-
-    console.log(response.status)
   }
 
+  // removes specific evaluation 
   removeEval = async() => {
     if (!this.state.authToken) {
       return;
@@ -131,6 +132,14 @@ class Card extends React.Component {
       return;
     }
   }
-}
 
-  export default withRouter(Card);
+  // updateEvalsList = () => {
+  //   CardList.setState({
+  //     evals: []
+  //   }, () => {
+  //     CardList.getEvals(this.props.classInfo.courseID)
+  //   })
+  // }
+}
+ 
+export default withRouter(Card);
