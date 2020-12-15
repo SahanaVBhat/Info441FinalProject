@@ -10,12 +10,13 @@ Currently there is no resource for UW students to see specific reviews and sugge
 
 User Client \
 Gateway layer - verify student is UW student, receive session information \
+MySQL database - store information of all users \
 Redis session store - save session information \
 Mongoose database - information of all the evaluations/ratings of a course \
-Course microservice - search for evaluations based on major/number \
-Evaluation microservice - submit a form for evaluation of class
+Course evaluation microservice - search for evaluations based on major/number, submit a form for evaluation of class \
 
-![](./InfrastructureDiagramNEW.jpeg)
+<!-- ![](./InfrastructureDiagramNEW.jpeg) -->
+![](./Infrastructure-Diagram-2.jpeg)
 https://lucid.app/invitations/accept/ceac9f69-1f24-4728-9327-78fdd456e2b0
 
 ### User Stories and Priority
