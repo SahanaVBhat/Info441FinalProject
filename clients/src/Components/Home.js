@@ -66,6 +66,7 @@ class Home extends Component {
     }
   }
 
+  // on change of search bar, trigger getInfo, setting coureCode to search value
   handleInputChange = () => {
     this.setState({
       courseCode: this.search.value

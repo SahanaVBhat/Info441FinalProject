@@ -1,0 +1,4 @@
+clients/node_modules/
+clients/build
+servers/microservices/node_modules/
+clients/build/@babel

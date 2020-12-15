@@ -35,7 +35,8 @@ defaultCourses();
 
 // get all courses or courses that match search param
 app.get("/v1/courses", async (req, res) => {
-	// 200: Successful response with all course information
+	// Response codes:
+	// 200: Successful response with ourse information
 	// 500: Internal server error 
 
 	try {
@@ -80,6 +81,7 @@ app.get("/v1/courses/:courseID", async (req, res) => {
 
 // get all evaluations for that course
 app.get("/v1/courses/:courseID/evaluations", async (req, res) => {
+	// Response codes:
 	// 200: Successful response with all evals in that course
 	// 500: Internal server error 
 	try {
@@ -96,6 +98,11 @@ app.get("/v1/courses/:courseID/evaluations", async (req, res) => {
 
 //add new evaluation 
 app.post("/v1/evaluations/", async (req, res) => {
+	// Response codes: 
+	// 201: Created new evaluation
+	// 401: Unauthorized user information access
+	// 500: Internal server error
+
 	// verify user authorization
 	var XUser = req.header('X-User');
 	if(!XUser){
@@ -152,53 +159,72 @@ app.post("/v1/evaluations/", async (req, res) => {
 
 //update evaluation text description based on specific evaluation ID
 app.patch("/v1/evaluations/:id", async (req, res) => {
+	// Response codes: 
+	// 201: Updated evaluation parameters
+	// 401: Unauthorized user information acces
+	// 403: User is not creator (forbidden access)
+	// 500: Internal server error
+
 	// verify user authorization
 	var XUser = req.header('X-User');
 	if(!XUser){
 		res.status(401).send("User Unauthorized");
 		return;
 	}
-	//get evaluation id 
-	const evaluationId = req.params.id;
-	const specificEvaluation = await Evaluation.find({ id: evaluationId });
-	//get user
-	var usr = JSON.parse(XUser);
-	//if user not creator of Evaluation
-	if (specificEvaluation[0].studentID != usr.id) {
-		res.status(403).send("Forbidden User");
-		return;
-	}
-	// get new description 
-	const {description} = req.body;
-	// update members
-	await Evaluation.where({ id: evaluationId }).updateOne({ description: description });
-	const updatedEvaluation = await Evaluation.find({ id: evaluationId });
-	res.set("Content-Type", "application/json");
-	res.json(updatedEvaluation);
 
+	try {
+		//get evaluation id 
+		const evaluationId = req.params.id;
+		const specificEvaluation = await Evaluation.find({ id: evaluationId });
+		//get user
+		var usr = JSON.parse(XUser);
+		//if user not creator of Evaluation
+		if (specificEvaluation[0].studentID != usr.id) {
+			res.status(403).send("Forbidden User");
+			return;
+		}
+		// get new description 
+		const {description} = req.body;
+		// update members
+		await Evaluation.where({ id: evaluationId }).updateOne({ description: description });
+		const updatedEvaluation = await Evaluation.find({ id: evaluationId });
+		res.set("Content-Type", "application/json");
+		res.status(201).json(updatedEvaluation);
+	} catch {
+		res.status(500).send("There was an issue updating evaluation");
+	}
 });
 
 app.delete("/v1/evaluations/:id", async (req, res) => {
-	// verify user authorization
+	// Response codes: 
+	// 200: Successfully deletes student evaluations.
+	// 401: Cannot verify review ID
+	// 403: User is not creator (forbidden access)
+	// 500: Internal server error
+
 	var XUser = req.header('X-User');
 	if(!XUser){
 		res.status(401).send("User Unauthorized");
 		return;
 	}
-	//get evaluation id 
-	const evaluationId = req.params.id;
-	const specificEvaluation = await Evaluation.find({ id: evaluationId });
-	//get user
-	var usr = JSON.parse(XUser);
-	//if user not creator of Evaluation
-	if (specificEvaluation[0].studentID != usr.id) {
-		res.status(403).send("Forbidden User");
-		return;
+	try {
+		//get evaluation id 
+		const evaluationId = req.params.id;
+		const specificEvaluation = await Evaluation.find({ id: evaluationId });
+		//get user
+		var usr = JSON.parse(XUser);
+		//if user not creator of Evaluation
+		if (specificEvaluation[0].studentID != usr.id) {
+			res.status(403).send("Forbidden User");
+			return;
+		}
+		// delete Evaluation
+		await Evaluation.deleteOne({ id: evaluationId });
+		res.set("Content-Type", "text/plain");
+		res.status(200).send("Successfullly deleted evaluation");
+	} catch {
+		res.status(500).send("There was an issue deleting evaluation");
 	}
-	// delete Evaluation
-    await Evaluation.deleteOne({ id: evaluationId });
-    res.set("Content-Type", "text/plain");
-	res.send("Successfullly deleted evaluation");
 });
 
 connect();
@@ -296,6 +322,7 @@ function defaultCourses() {
 	query = new Course(ling200);
 	query.save();
 
+	// create defaul test eval 
 	const testEval = {
 		id: 1,
 		studentID: 1,

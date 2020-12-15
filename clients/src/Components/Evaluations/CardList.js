@@ -23,26 +23,11 @@ class CardList extends Component {
   }
 
   nextPath(path) {
-    this.props.history.push(path);
+    this.props.history.push(path); 
   }
 
   render() {
-
     if (this.props.classInfo.length != 0) {
-      // if (this.state.evals[0] != null) {
-      //     console.log(this.state.evals[0][3])
-      //     var instructor = document.createElement("P");
-      //     var instrText = document.createTextNode("Instructor(s): " + this.state.evals[0][3]);
-      //     instructor.appendChild(instrText);
-
-      //     var descr = document.createElement("P");
-      //     var descrText = document.createTextNode("Description: " + this.state.evals[0][10]);
-      //     descr.appendChild(descrText);
-
-      //     document.getElementById("hi").appendChild(document.createElement("HR"));
-      //     document.getElementById("hi").appendChild(instructor);
-      //     document.getElementById("hi").appendChild(descr);
-      // }
       return (
         <div class="card text-center">
           <div class="card-header">
@@ -57,13 +42,15 @@ class CardList extends Component {
                   state: {
                     courseID: this.props.classInfo[0]
                   }}}>Add Evaluation</Link>
-
+  
             </a>
             <a href="#" class="btn btn-primary" onClick={this.handleEvalClick}>Read Evaluations</a>
           </div>
           <div class="eval-body" id="hi">
             {this.state.show && this.state.evals.map((data, index) => {
-              return (<Card classInfo={data} value={index}/>);
+              return (
+                <Card classInfo={data} value={index}/>
+              );
             })}
           </div>
         </div>
@@ -75,15 +62,16 @@ class CardList extends Component {
     }
   }
 
+  // on click of button 'Read Evaluations' call getEvals() passing course ID from classInfo
   handleEvalClick = () => {
     this.setState({
       evals: []
     }, () => {
       this.getEvals(this.props.classInfo[0])
-      //this.getEvals()
     })
   }
 
+  // call 'GET /v1/courses/:courseID/evaluations` to get evaluations for specific course 
   getEvals = async (courseID) => {
     const response = await fetch(api.base + api.handlers.courses + "/" + courseID + "/evaluations", { method: "GET" });
     if (response.status >= 300) {
@@ -94,15 +82,10 @@ class CardList extends Component {
 
     const evals = await response.json();
 
-    // check if there is more than one evaluation for course 
+    // check if there is at least one evaluation for course 
     if (evals.length > 0) {
-      // get current evals saved in state
-      //let currEvals = this.state.evals;
 
-      // for each evaluation:
-      // -- create array containg all eval information to display
-      // -- add eval to currEvals (for state)
-
+      // for each evaluation create array containg all eval information to display
       let evalsMap = evals.map((data, key) => {
         var oneEval = {};
         oneEval.id = data.id;
@@ -120,14 +103,6 @@ class CardList extends Component {
         return oneEval;
       });
 
-      console.log(evalsMap)
-
-      // evals.forEach(function(e) {
-      //     let evalInfo = [e.id, e.studentID, e.courseID, e.instructors[0]['name'], e.year, e.quarter, e.creditType, e.credits, e.workload, e.gradingTechniques, e.description, e.likedUsers.length, e.dislikedUsers.length, e.createdAt, e.editedAt]
-
-      //     currEvals.push(evalInfo);
-      // })
-
       // add evaluations to page 
       if (evalsMap.length >= 1) {
         this.setState({
@@ -135,27 +110,6 @@ class CardList extends Component {
           show: true
         })
         this.setError("");
-        // instructor 
-        // var instructor = document.createElement("P");
-        // var instrText = document.createTextNode("Instructor(s): " + this.state.evals[0][3]);
-        // instructor.appendChild(instrText);
-
-
-        // // created at 
-        // var created = document.createElement("P");
-        // var createdText = document.createTextNode("Created At: " + this.state.evals[0][11]);
-        // created.appendChild(createdText);
-
-        // // created at 
-        // var created = document.createElement("P");
-        // var createdText = document.createTextNode("Created At: " + this.state.evals[0][13]);
-        // created.appendChild(createdText);
-
-        // document.getElementById("hi").appendChild(document.createElement("HR"));
-        // document.getElementById("hi").appendChild(instructor);
-        // document.getElementById("hi").appendChild(descr);
-        // document.getElementById("hi").appendChild(created);
-
       }
     } else {
       this.setState({
@@ -170,4 +124,5 @@ class CardList extends Component {
 //     return <Card id={this.props.classInfo[0]} course={this.props.classInfo[1]} name={this.props.classInfo[2]} d={this.props.classInfo[3]}/>;
 //   }
 // }
+
 export default CardList;
