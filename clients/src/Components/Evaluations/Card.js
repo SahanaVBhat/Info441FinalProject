@@ -108,7 +108,7 @@ class Card extends React.Component {
       return;
     }
 
-    alert("Evaluation was successfully updated! Click in 'Read Evaluations' to view updates")
+    alert("Evaluation was successfully updated! Click in 'Read Evaluations' to view updates");
   }
 
   // removes specific evaluation 
@@ -134,7 +134,7 @@ class Card extends React.Component {
       return;
     }
 
-    alert("Evaluation was successfully deleted! Click in 'Read Evaluations' to view updates")
+    alert("Evaluation was successfully deleted! Click in 'Read Evaluations' to view updates");
   }
 
   // updateEvalsList = () => {
